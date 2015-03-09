@@ -1,0 +1,17 @@
+{
+  "uuid": "109cbdb5-de05-44fe-bd4d-baf8f65ee344",
+  "shortName": "Pebcessing",
+  "longName": "PebcessingApp",
+  "companyName": "hikoLab",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
