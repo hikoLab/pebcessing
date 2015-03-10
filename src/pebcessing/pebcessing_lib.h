@@ -63,7 +63,7 @@ float degrees(float radians);
 float random(float low, float high);
 GFont loadFont(const char *font_key);
 void textFont(GFont font);
-void text(char *str, float x, float y, float w, float h);
+void text(const char *str, float x, float y, float w, float h);
 void textAlign(int alignX);
 
 /* --------------------------

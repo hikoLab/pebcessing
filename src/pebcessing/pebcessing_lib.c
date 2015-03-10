@@ -332,7 +332,7 @@ void textFont(GFont font)
   draw_font = font;
 }
 
-void text(char *str, float x, float y, float w, float h)
+void text(const char *str, float x, float y, float w, float h)
 {
   if (draw_font == NULL) {
     draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
