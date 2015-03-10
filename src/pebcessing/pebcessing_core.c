@@ -111,7 +111,7 @@ static void update_canvas_timer_callback(void *data)
   }
 }
 
-#if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAYEVENT)
+#if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAY_EVENT)
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
 {
 #ifdef ENABLE_DAY_EVENT
@@ -154,7 +154,7 @@ void init_pebcessing(Window *window, Layer *parent_layer)
   window_set_click_config_provider(window, (ClickConfigProvider)click_config_provider);
 #endif
 
-#if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAYEVENT)
+#if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAY_EVENT)
 
   TimeUnits tick_units = 0;
 
@@ -181,6 +181,10 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
 void deinit_pebcessing(void)
 {
+#if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAY_EVENT)  
+  tick_timer_service_unsubscribe();
+#endif
+
 #ifdef ENABLE_KEEP_PREVIOUS_FRAME
   if (pre_frame_buffer != NULL) {
     gbitmap_destroy(pre_frame_buffer);
