@@ -299,8 +299,9 @@ void noStroke()
 int getPixel(int x, int y)
 {
   if (g_canvas_frame_buffer != NULL) {
-    if (0 <= x && x < g_width && 0 <= y && y <= g_height) {
-      return g_raw_pixels[x / 8 + y * g_row_size_bytes] & (1 << (x % 8));
+    if (0 <= x && x < g_width && 0 <= y && y < g_height) {
+      uint8_t n = x % 8;      
+      return (g_raw_pixels[x / 8 + y * g_row_size_bytes] & (1 << n)) >> n;
     }
   }
   return 0;
@@ -322,7 +323,7 @@ void loadPixels()
 void setPixel(int x, int y, int color)
 {
   if (g_canvas_frame_buffer != NULL) {
-    if (0 <= x && x < g_width && 0 <= y && y <= g_height) {
+    if (0 <= x && x < g_width && 0 <= y && y < g_height) {
       if (color == 0) {
         g_raw_pixels[x / 8 + y * g_row_size_bytes] &= ~(1 << (x % 8));
       }
