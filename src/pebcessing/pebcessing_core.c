@@ -181,6 +181,10 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
 void deinit_pebcessing(void)
 {
+  if (g_canvas_frame_buffer != NULL) {
+    gbitmap_destroy(g_canvas_frame_buffer);
+  }
+
 #if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAY_EVENT)  
   tick_timer_service_unsubscribe();
 #endif

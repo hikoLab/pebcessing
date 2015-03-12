@@ -5,16 +5,19 @@
 #include "../settings.h"
 
 
-extern GContext *g_ctx;
 extern int g_width;
 extern int g_height;
-
+extern unsigned long int g_frame_count;
 
 #ifdef ENABLE_KEY_EVENT
 extern ButtonId g_key_code;
 #endif
 
-extern unsigned long int g_frame_count;
+extern GBitmap *g_canvas_frame_buffer;
+extern uint8_t *g_raw_pixels;
+extern uint16_t g_row_size_bytes;
+
+extern GContext *g_ctx;
 
 
 // Mathematical constants
@@ -56,6 +59,10 @@ void fill(int color);
 void noFill();
 void stroke(int color);
 void noStroke();
+int getPixel(int x, int y);
+void loadPixels();
+void setPixel(int x, int y, int color);
+void updatePixels();
 float _sin(float angle);
 float _cos(float angle);
 float radians(float degrees);
