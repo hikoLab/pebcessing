@@ -12,6 +12,7 @@ static GTextAlignment text_alignment = GTextAlignmentLeft;
 /* --------------------------
    Global variables
    -------------------------- */
+
 int g_width = 144;                    // Alias of "width"
 int g_height = 168;                   // Alias of "height"
 unsigned long int g_frame_count = 0;  // Alias of "frameCount"
@@ -19,6 +20,10 @@ unsigned long int g_frame_count = 0;  // Alias of "frameCount"
 #ifdef ENABLE_KEY_EVENT
 ButtonId g_key_code;  // Alias of "keyCode"
 #endif
+
+GBitmap *g_canvas_frame_buffer = NULL;  // A frame buffer for loadPixles(), updatePixels()
+uint8_t *g_raw_pixels;                  // An array for fast access to the frame buffer like Processing's "pixels"
+uint16_t g_row_size_bytes;              // This variable is needed for access to g_raw_pixels.
 
 GContext *g_ctx;
 
@@ -56,6 +61,7 @@ void size(float w, float h)
 /* --------------------------
    2D Primitives
    -------------------------- */
+
 void point(float x, float y)
 {
   graphics_draw_pixel(g_ctx, GPoint(x, y));
@@ -236,6 +242,7 @@ int millis()
 /* --------------------------
    Color
    -------------------------- */
+
 void background(int color)
 {
   if (color == 0) {
@@ -286,8 +293,62 @@ void noStroke()
 }
 
 /* --------------------------
+   Image - Pixels
+   -------------------------- */
+
+int getPixel(int x, int y)
+{
+  if (g_canvas_frame_buffer != NULL) {
+    if (0 <= x && x < g_width && 0 <= y && y <= g_height) {
+      return g_raw_pixels[x / 8 + y * g_row_size_bytes] & (1 << (x % 8));
+    }
+  }
+  return 0;
+}
+
+void loadPixels()
+{
+  g_canvas_frame_buffer = graphics_capture_frame_buffer(g_ctx);
+
+  if (g_canvas_frame_buffer == NULL) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_capture_frame_buffer() at loadPixels()");
+    return;
+  }
+
+  g_raw_pixels = g_canvas_frame_buffer->addr;
+  g_row_size_bytes = g_canvas_frame_buffer->row_size_bytes;
+}
+
+void setPixel(int x, int y, int color)
+{
+  if (g_canvas_frame_buffer != NULL) {
+    if (0 <= x && x < g_width && 0 <= y && y <= g_height) {
+      if (color == 0) {
+        g_raw_pixels[x / 8 + y * g_row_size_bytes] &= ~(1 << (x % 8));
+      }
+      else {
+        g_raw_pixels[x / 8 + y * g_row_size_bytes] |= 1 << (x % 8);
+      }
+    }
+  }
+}
+
+void updatePixels()
+{
+  if (g_canvas_frame_buffer != NULL) {
+    graphics_draw_bitmap_in_rect(g_ctx, g_canvas_frame_buffer, GRect(0, 0, g_canvas_frame_buffer->bounds.size.w, g_canvas_frame_buffer->bounds.size.h));
+
+    if (!graphics_release_frame_buffer(g_ctx, g_canvas_frame_buffer)) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_release_frame_buffer() at updatePixels()");
+    }
+    g_canvas_frame_buffer = NULL;
+  }
+}
+
+/* --------------------------
    Trigonometry
    -------------------------- */
+
 // sin() conflicts the compiler's built-in funciton, so this function is renamed _sin().
 float _sin(float angle)
 {
@@ -313,6 +374,7 @@ inline float degrees(float radians)
 /* --------------------------
    Random
    -------------------------- */
+
 float random(float low, float high)
 {
   float rnd = (float)rand() / RAND_MAX;
@@ -322,6 +384,7 @@ float random(float low, float high)
 /* --------------------------
    Typography
    -------------------------- */
+
 GFont loadFont(const char *font_key)
 {
   return fonts_get_system_font(font_key);
