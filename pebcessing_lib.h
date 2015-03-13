@@ -27,8 +27,19 @@ extern GContext *g_ctx;
 #define TWO_PI (2.0f * PI)
 #define TAU (2.0f * PI)
 
-// Enumerators of text alignment
-typedef enum { LEFT, CENTER, RIGHT } TextAlignment;
+// Constants for text alignment or shape draw mode
+#define LEFT GTextAlignmentLeft
+#define RIGHT GTextAlignmentRight
+#define CENTER GTextAlignmentCenter
+#define CORNER CENTER + 0x100
+#define CORNERS CENTER + 0x101
+#define RADIUS CENTER + 0x102
+
+// Constants for key events
+#define BACK BUTTON_ID_BACK
+#define UP BUTTON_ID_UP
+#define SELECT BUTTON_ID_SELECT
+#define DOWN BUTTON_ID_DOWN
 
 
 /* --------------------------
