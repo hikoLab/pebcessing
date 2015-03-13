@@ -14,7 +14,7 @@ static GBitmap *pre_frame_buffer = NULL;
 
 #ifdef ENABLE_KEY_EVENT
 
-void button_pressed_handler(ClickRecognizerRef recognizer, void *context)
+static void button_pressed_handler(ClickRecognizerRef recognizer, void *context)
 {
   // Window *window = (Window *)context;
   ButtonId id = click_recognizer_get_button_id(recognizer);
@@ -22,7 +22,7 @@ void button_pressed_handler(ClickRecognizerRef recognizer, void *context)
   keyPressed();
 }
 
-void button_released_handler(ClickRecognizerRef recognizer, void *context)
+static void button_released_handler(ClickRecognizerRef recognizer, void *context)
 {
   // Window *window = (Window *)context;
   ButtonId id = click_recognizer_get_button_id(recognizer);
@@ -30,7 +30,7 @@ void button_released_handler(ClickRecognizerRef recognizer, void *context)
   keyReleased();
 }
 
-void click_config_provider(Window *window)
+static void click_config_provider(Window *window)
 {
   window_raw_click_subscribe(BUTTON_ID_BACK, button_pressed_handler, button_released_handler, NULL);
   window_raw_click_subscribe(BUTTON_ID_UP, button_pressed_handler, button_released_handler, NULL);
