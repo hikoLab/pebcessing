@@ -383,6 +383,25 @@ float random(float low, float high)
 }
 
 /* --------------------------
+   Calculation
+   -------------------------- */
+
+float constrain(float value, float low, float high)
+{
+  if (value < low)
+    return low;
+  else if (value > high)
+    return high;
+
+  return value;
+}
+
+float map(float value, float start1, float stop1, float start2, float stop2)
+{
+  return (value - start1) * (stop2 - start2) / (stop1 - start1) + start2;
+}
+
+/* --------------------------
    Typography
    -------------------------- */
 
