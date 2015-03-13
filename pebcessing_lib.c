@@ -32,28 +32,28 @@ GContext *g_ctx;
    Environment
    -------------------------- */
 
-void frameRate(float frame_rate)
+inline void frameRate(float frame_rate)
 {
   set_frame_rate(frame_rate);
 }
 
-void loop()
+inline void loop()
 {
   enable_loop();
 }
 
-void noLoop()
+inline void noLoop()
 {
   disable_loop();
 }
 
-void redraw()
+inline void redraw()
 {
   request_update_canvas();
 }
 
 // do nothing
-void size(float w, float h)
+inline void size(float w, float h)
 {
   return;
 }
@@ -62,12 +62,12 @@ void size(float w, float h)
    2D Primitives
    -------------------------- */
 
-void point(float x, float y)
+inline void point(float x, float y)
 {
   graphics_draw_pixel(g_ctx, GPoint(x, y));
 }
 
-void line(float x1, float y1, float x2, float y2)
+inline void line(float x1, float y1, float x2, float y2)
 {
   graphics_draw_line(g_ctx, GPoint(x1, y1), GPoint(x2, y2));
 }
@@ -237,7 +237,6 @@ long int millis()
   time_t sec;
   uint16_t ms;
   time_ms(&sec, &ms);
-
   return sec * 1000 + ms;
 }
 
@@ -271,7 +270,7 @@ void fill(int color)
   no_fill_flag = false;
 }
 
-void noFill()
+inline void noFill()
 {
   no_fill_flag = true;
 }
@@ -289,7 +288,7 @@ void stroke(int color)
   no_stroke_flag = false;
 }
 
-void noStroke()
+inline void noStroke()
 {
   no_stroke_flag = true;
 }
@@ -353,13 +352,13 @@ void updatePixels()
    -------------------------- */
 
 // sin() conflicts the compiler's built-in funciton, so this function is renamed _sin().
-float _sin(float angle)
+inline float _sin(float angle)
 {
   return (float)sin_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * PI))) / TRIG_MAX_RATIO;
 }
 
 // cos() conflicts the compiler's built-in funciton, so this function is renamed _cos().
-float _cos(float angle)
+inline float _cos(float angle)
 {
   return (float)cos_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * PI))) / TRIG_MAX_RATIO;
 }
@@ -378,7 +377,7 @@ inline float degrees(float radians)
    Random
    -------------------------- */
 
-float random(float low, float high)
+inline float random(float low, float high)
 {
   float rnd = (float)rand() / RAND_MAX;
   return rnd * (high - low) + low;
@@ -398,7 +397,7 @@ float constrain(float value, float low, float high)
   return value;
 }
 
-float map(float value, float start1, float stop1, float start2, float stop2)
+inline float map(float value, float start1, float stop1, float start2, float stop2)
 {
   return (value - start1) * (stop2 - start2) / (stop1 - start1) + start2;
 }
@@ -407,12 +406,12 @@ float map(float value, float start1, float stop1, float start2, float stop2)
    Typography
    -------------------------- */
 
-GFont loadFont(const char *font_key)
+inline GFont loadFont(const char *font_key)
 {
   return fonts_get_system_font(font_key);
 }
 
-void textFont(GFont font)
+inline void textFont(GFont font)
 {
   draw_font = font;
 }
@@ -427,7 +426,7 @@ void text(const char *str, float x, float y, float w, float h)
   graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, w, h), GTextOverflowModeWordWrap, text_alignment, NULL);
 }
 
-void textAlign(int alignX)
+inline void textAlign(int alignX)
 {
   text_alignment = alignX;
 }
