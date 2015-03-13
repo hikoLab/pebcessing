@@ -232,12 +232,14 @@ int second()
   return current_time->tm_sec;
 }
 
-/*
-int millis()
+long int millis()
 {
-  return 0;
+  time_t sec;
+  uint16_t ms;
+  time_ms(&sec, &ms);
+
+  return sec * 1000 + ms;
 }
-*/
 
 /* --------------------------
    Color
