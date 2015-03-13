@@ -408,17 +408,7 @@ void text(const char *str, float x, float y, float w, float h)
 
 void textAlign(int alignX)
 {
-  switch (alignX) {
-    case LEFT:
-      text_alignment = GTextAlignmentLeft;
-      break;
-    case CENTER:
-      text_alignment = GTextAlignmentCenter;
-      break;
-    case RIGHT:
-      text_alignment = GTextAlignmentRight;
-      break;
-  }
+  text_alignment = alignX;
 }
 
 /* --------------------------
