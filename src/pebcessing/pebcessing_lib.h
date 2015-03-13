@@ -74,6 +74,8 @@ int getPixel(int x, int y);
 void loadPixels();
 void setPixel(int x, int y, int color);
 void updatePixels();
+float constrain(float value, float low, float high);
+float map(float value, float start1, float stop1, float start2, float stop2);
 float _sin(float angle);
 float _cos(float angle);
 float radians(float degrees);
