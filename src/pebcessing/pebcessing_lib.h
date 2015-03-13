@@ -64,7 +64,7 @@ int wday();
 int hour();
 int minute();
 int second();
-// int millis();
+long int millis();
 void background();
 void fill(int color);
 void noFill();
