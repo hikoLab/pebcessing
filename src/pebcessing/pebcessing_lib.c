@@ -416,7 +416,19 @@ inline void textFont(GFont font)
   draw_font = font;
 }
 
-void text(const char *str, float x, float y, float w, float h)
+void text(const char *str, float x, float y)
+{
+  const int16_t SHRT_MAX = 32767;
+
+  if (draw_font == NULL) {
+    draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
+  }
+
+  graphics_context_set_text_color(g_ctx, fill_color);
+  graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment, NULL);
+}
+
+void textInRect(const char *str, float x, float y, float w, float h)
 {
   if (draw_font == NULL) {
     draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
