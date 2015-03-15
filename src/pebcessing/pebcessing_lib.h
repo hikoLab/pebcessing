@@ -91,4 +91,5 @@ void textAlign(int alignX);
 /* --------------------------
    Functions for use in Pebcessing's internal routine
    -------------------------- */
+void init_pebcessing_lib();
 void set_draw_state();
