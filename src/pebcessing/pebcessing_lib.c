@@ -3,7 +3,7 @@
 
 static bool no_stroke_flag = false;
 static bool no_fill_flag = false;
-static int fill_color = GColorBlack;
+static int fill_color = GColorWhite;
 static int stroke_color = GColorBlack;
 static GFont draw_font;
 static GTextAlignment text_alignment = GTextAlignmentLeft;
