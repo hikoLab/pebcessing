@@ -406,7 +406,12 @@ inline float map(float value, float start1, float stop1, float start2, float sto
    Typography
    -------------------------- */
 
-inline GFont loadFont(const char *font_key)
+inline GFont loadFont(uint32_t resource_id)
+{
+  return fonts_load_custom_font(resource_get_handle(resource_id));
+}
+
+inline GFont loadSystemFont(const char *font_key)
 {
   return fonts_get_system_font(font_key);
 }
