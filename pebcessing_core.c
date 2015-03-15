@@ -48,7 +48,7 @@ static void update_canvas(Layer *layer, GContext *ctx)
 #ifdef ENABLE_KEEP_PREVIOUS_FRAME
   // Draw the previous frame buffer.
   if (pre_frame_buffer != NULL) {
-    graphics_draw_bitmap_in_rect(ctx, pre_frame_buffer, GRect(0, 0, pre_frame_buffer->bounds.size.w, pre_frame_buffer->bounds.size.h));
+    graphics_draw_bitmap_in_rect(ctx, pre_frame_buffer, gbitmap_get_bounds(pre_frame_buffer));
   }
 #endif
 
@@ -85,14 +85,18 @@ static void update_canvas(Layer *layer, GContext *ctx)
     gbitmap_destroy(pre_frame_buffer);
   }
 
-  pre_frame_buffer = gbitmap_create_blank(GSize(fb->bounds.size.w, fb->bounds.size.h));
-
+  GRect fb_bounds = gbitmap_get_bounds(fb);
+#ifdef PBL_PLATFORM_APLITE
+  pre_frame_buffer = gbitmap_create_blank(GSize(fb_bounds.size.w, fb_bounds.size.h));
+#elif PBL_PLATFORM_BASALT
+  pre_frame_buffer = gbitmap_create_blank(GSize(fb_bounds.size.w, fb_bounds.size.h), GBitmapFormat8Bit);
+#endif
   if (pre_frame_buffer == NULL) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: gbitmap_create_blank()");
     return;
   }
 
-  memcpy(pre_frame_buffer->addr, fb->addr, fb->bounds.size.h * fb->row_size_bytes);
+  memcpy(gbitmap_get_data(pre_frame_buffer), gbitmap_get_data(fb), fb_bounds.size.h * gbitmap_get_bytes_per_row(fb));
 
   if (!graphics_release_frame_buffer(ctx, fb)) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_release_frame_buffer()");
@@ -148,7 +152,7 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
   layer_set_update_proc(canvas_layer, update_canvas);
 
-  layer_mark_dirty(canvas_layer);
+  init_pebcessing_lib();
 
 #ifdef ENABLE_KEY_EVENT
   window_set_click_config_provider(window, (ClickConfigProvider)click_config_provider);
@@ -177,6 +181,8 @@ void init_pebcessing(Window *window, Layer *parent_layer)
   tick_timer_service_subscribe(tick_units, tick_handler);
 
 #endif
+
+  layer_mark_dirty(canvas_layer);
 }
 
 void deinit_pebcessing(void)

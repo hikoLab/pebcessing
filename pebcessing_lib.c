@@ -3,8 +3,8 @@
 
 static bool no_stroke_flag = false;
 static bool no_fill_flag = false;
-static int fill_color = GColorWhite;
-static int stroke_color = GColorBlack;
+static GColor fill_color;
+static GColor stroke_color;
 static GFont draw_font;
 static GTextAlignment text_alignment = GTextAlignmentLeft;
 
@@ -13,12 +13,12 @@ static GTextAlignment text_alignment = GTextAlignmentLeft;
    Global variables
    -------------------------- */
 
-int g_width = 144;                    // Alias of "width"
-int g_height = 168;                   // Alias of "height"
-unsigned long int g_frame_count = 0;  // Alias of "frameCount"
+int g_width = 144;                      // Alias of "width"
+int g_height = 168;                     // Alias of "height"
+unsigned long int g_frame_count = 0;    // Alias of "frameCount"
 
 #ifdef ENABLE_KEY_EVENT
-ButtonId g_key_code;  // Alias of "keyCode"
+ButtonId g_key_code;                    // Alias of "keyCode"
 #endif
 
 GBitmap *g_canvas_frame_buffer = NULL;  // A frame buffer for loadPixles(), updatePixels()
@@ -317,8 +317,8 @@ void loadPixels()
     return;
   }
 
-  g_raw_pixels = g_canvas_frame_buffer->addr;
-  g_row_size_bytes = g_canvas_frame_buffer->row_size_bytes;
+  g_raw_pixels = gbitmap_get_data(g_canvas_frame_buffer);
+  g_row_size_bytes = gbitmap_get_bytes_per_row(g_canvas_frame_buffer);
 }
 
 void setPixel(int x, int y, int color)
@@ -338,7 +338,8 @@ void setPixel(int x, int y, int color)
 void updatePixels()
 {
   if (g_canvas_frame_buffer != NULL) {
-    graphics_draw_bitmap_in_rect(g_ctx, g_canvas_frame_buffer, GRect(0, 0, g_canvas_frame_buffer->bounds.size.w, g_canvas_frame_buffer->bounds.size.h));
+
+    graphics_draw_bitmap_in_rect(g_ctx, g_canvas_frame_buffer, gbitmap_get_bounds(g_canvas_frame_buffer));
 
     if (!graphics_release_frame_buffer(g_ctx, g_canvas_frame_buffer)) {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_release_frame_buffer() at updatePixels()");
@@ -451,6 +452,12 @@ inline void textAlign(int alignX)
 /* --------------------------
    Functions for use in Pebcessing's internal routine
    -------------------------- */
+
+void init_pebcessing_lib()
+{
+  fill_color = GColorWhite;
+  stroke_color = GColorBlack;
+}
 
 // Set the draw state before drawing the frame.
 void set_draw_state()
