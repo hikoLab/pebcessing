@@ -24,8 +24,10 @@ ButtonId g_key_code;                    // Alias of "keyCode"
 GBitmap *g_canvas_frame_buffer = NULL;  // A frame buffer for loadPixles(), updatePixels()
 uint8_t *g_raw_pixels;                  // An array for fast access to the frame buffer like Processing's "pixels"
 uint16_t g_row_size_bytes;              // This variable is needed for access to g_raw_pixels.
-
 GContext *g_ctx;
+
+
+void conv_black_color(uint8_t *color);
 
 
 /* --------------------------
@@ -244,27 +246,55 @@ long int millis()
    Color
    -------------------------- */
 
-void background(int color)
+uint8_t color(float r, float g, float b)
 {
-  if (color == 0) {
+#ifdef PBL_COLOR
+  uint8_t color = GColorFromRGB(r, g, b).argb;
+  conv_black_color(&color);
+  return color;
+#else
+  // Calculate gray scale of the color
+  if ((299 * r + 587 * g + 114 * b) > 1000 * 255 / 2) {
+    return GColorWhite;
+  }
+  else {
+    return GColorBlack;
+  }
+#endif
+}
+
+void background(uint8_t color)
+{
+#ifdef PBL_COLOR
+  conv_black_color(&color);
+  graphics_context_set_fill_color(g_ctx, (GColor8){.argb=color});
+#else
+  if ((GColor)color == GColorBlack) {
     graphics_context_set_fill_color(g_ctx, GColorBlack);
   }
   else {
     graphics_context_set_fill_color(g_ctx, GColorWhite);
   }
+#endif
   graphics_fill_rect(g_ctx, GRect(0, 0, g_width, g_height), 0, GCornerNone);
 
   graphics_context_set_fill_color(g_ctx, fill_color);
 }
 
-void fill(int color)
+void fill(uint8_t color)
 {
-  if (color == 0) {
+#ifdef PBL_COLOR
+  conv_black_color(&color);
+  fill_color = (GColor8){.argb=color};
+#else
+  if (color == GColorBlack) {
     fill_color = GColorBlack;
   }
   else {
     fill_color = GColorWhite;
   }
+#endif
+
   graphics_context_set_fill_color(g_ctx, fill_color);
 
   no_fill_flag = false;
@@ -275,14 +305,19 @@ inline void noFill()
   no_fill_flag = true;
 }
 
-void stroke(int color)
+void stroke(uint8_t color)
 {
-  if (color == 0) {
+#ifdef PBL_COLOR
+  conv_black_color(&color);
+  stroke_color = (GColor8){.argb=color};
+#else
+  if (color == GColorBlack) {
     stroke_color = GColorBlack;
   }
   else {
     stroke_color = GColorWhite;
   }
+#endif
   graphics_context_set_stroke_color(g_ctx, stroke_color);
 
   no_stroke_flag = false;
@@ -297,12 +332,18 @@ inline void noStroke()
    Image - Pixels
    -------------------------- */
 
-int getPixel(int x, int y)
+uint8_t getPixel(int x, int y)
 {
   if (g_canvas_frame_buffer != NULL) {
     if (0 <= x && x < g_width && 0 <= y && y < g_height) {
-      uint8_t n = x % 8;      
+#ifdef PBL_COLOR
+      uint8_t color = g_raw_pixels[x + y * g_row_size_bytes];
+      conv_black_color(&color);
+      return color;
+#else
+      uint8_t n = x % 8;
       return (g_raw_pixels[x / 8 + y * g_row_size_bytes] & (1 << n)) >> n;
+#endif
     }
   }
   return 0;
@@ -321,16 +362,21 @@ void loadPixels()
   g_row_size_bytes = gbitmap_get_bytes_per_row(g_canvas_frame_buffer);
 }
 
-void setPixel(int x, int y, int color)
+void setPixel(int x, int y, uint8_t color)
 {
   if (g_canvas_frame_buffer != NULL) {
     if (0 <= x && x < g_width && 0 <= y && y < g_height) {
+#ifdef PBL_COLOR
+      conv_black_color(&color);
+      g_raw_pixels[x + y * g_row_size_bytes] = color;
+#else
       if (color == 0) {
         g_raw_pixels[x / 8 + y * g_row_size_bytes] &= ~(1 << (x % 8));
       }
       else {
         g_raw_pixels[x / 8 + y * g_row_size_bytes] |= 1 << (x % 8);
       }
+#endif
     }
   }
 }
@@ -465,3 +511,19 @@ void set_draw_state()
   graphics_context_set_fill_color(g_ctx, fill_color);
   graphics_context_set_stroke_color(g_ctx, stroke_color);
 }
+
+#ifdef PBL_COLOR
+// This function is implemented in an "ad hoc manner".
+// Convert black color (Swap 0b11000000 <-> 0b00000000)
+// The color of fill(0) is black in Processing, but GColorBlack is 0b11000000.
+// So convert a value of a color by this function.
+void conv_black_color(uint8_t *color)
+{
+  if (*color == 0) {
+    *color = (uint8_t)0b11000000;
+  }
+  else if (*color == 0b11000000) {
+    *color = 0;
+  }
+}
+#endif
