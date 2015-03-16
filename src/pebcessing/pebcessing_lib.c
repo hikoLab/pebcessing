@@ -401,23 +401,23 @@ void updatePixels()
 // sin() conflicts the compiler's built-in funciton, so this function is renamed _sin().
 inline float _sin(float angle)
 {
-  return (float)sin_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * PI))) / TRIG_MAX_RATIO;
+  return (float)sin_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * M_PI))) / TRIG_MAX_RATIO;
 }
 
 // cos() conflicts the compiler's built-in funciton, so this function is renamed _cos().
 inline float _cos(float angle)
 {
-  return (float)cos_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * PI))) / TRIG_MAX_RATIO;
+  return (float)cos_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * M_PI))) / TRIG_MAX_RATIO;
 }
 
 inline float radians(float degrees)
 {
-  return degrees * PI / 180.0f;
+  return degrees * M_PI / 180.0f;
 }
 
 inline float degrees(float radians)
 {
-  return radians * 180.0f / PI;
+  return radians * 180.0f / M_PI;
 }
 
 /* --------------------------
