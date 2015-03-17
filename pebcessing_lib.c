@@ -7,6 +7,10 @@ static GColor fill_color;
 static GColor stroke_color;
 static GFont draw_font;
 static GTextAlignment text_alignment = GTextAlignmentLeft;
+static int color_mode = COLOR_MODE_RGB;
+static float color_v1_max = 255;
+static float color_v2_max = 255;
+static float color_v3_max = 255;
 
 
 /* --------------------------
@@ -27,7 +31,8 @@ uint16_t g_row_size_bytes;              // This variable is needed for access to
 GContext *g_ctx;
 
 
-void conv_black_color(uint8_t *color);
+static void conv_black_color(uint8_t *color);
+static uint8_t get_color_from_hsb(float hue, float saturation, float brightness);
 
 
 /* --------------------------
@@ -246,15 +251,36 @@ long int millis()
    Color
    -------------------------- */
 
-uint8_t color(float r, float g, float b)
+uint8_t color(float v1, float v2, float v3)
 {
+  if (v1 < 0)
+    v1 = 0;
+  else if (v1 > color_v1_max)
+    v1 = color_v1_max;
+
+  if (v2 < 0)
+    v2 = 0;
+  else if (v2 > color_v2_max)
+    v2 = color_v2_max;
+
+  if (v3 < 0)
+    v3 = 0;
+  else if (v3 > color_v3_max)
+    v3 = color_v3_max;
+
 #ifdef PBL_COLOR
-  uint8_t color = GColorFromRGB(r, g, b).argb;
+  uint8_t color;
+  if (color_mode == COLOR_MODE_RGB) {
+    color = GColorFromRGB(v1, v2, v3).argb;
+  }
+  else if (color_mode == COLOR_MODE_HSB) {
+    color = get_color_from_hsb(v1, v2, v3);
+  }
   conv_black_color(&color);
   return color;
 #else
-  // Calculate gray scale of the color
-  if ((299 * r + 587 * g + 114 * b) > 1000 * 255 / 2) {
+  // Calculate gray scale of the RGB color
+  if ((299 * v1 + 587 * v2 + 114 * v3) > 1000 * 255 / 2) {
     return GColorWhite;
   }
   else {
@@ -279,6 +305,13 @@ void background(uint8_t color)
   graphics_fill_rect(g_ctx, GRect(0, 0, g_width, g_height), 0, GCornerNone);
 
   graphics_context_set_fill_color(g_ctx, fill_color);
+}
+
+inline void colorMode(int mode)
+{
+#ifdef PBL_COLOR
+  color_mode = mode;
+#endif
 }
 
 void fill(uint8_t color)
@@ -517,7 +550,7 @@ void set_draw_state()
 // Convert black color (Swap 0b11000000 <-> 0b00000000)
 // The color of fill(0) is black in Processing, but GColorBlack is 0b11000000.
 // So convert a value of a color by this function.
-void conv_black_color(uint8_t *color)
+static void conv_black_color(uint8_t *color)
 {
   if (*color == 0) {
     *color = (uint8_t)0b11000000;
@@ -525,5 +558,73 @@ void conv_black_color(uint8_t *color)
   else if (*color == 0b11000000) {
     *color = 0;
   }
+}
+#endif
+
+#ifdef PBL_COLOR
+static uint8_t get_color_from_hsb(float hue, float saturation, float brightness)
+{
+  float h = (hue / color_v1_max) * 360.0f / 60.0f;
+  float s = saturation / color_v2_max;
+  float v = brightness / color_v3_max;
+
+  float r = 0;
+  float g = 0;
+  float b = 0;
+
+  if (s == 0) {
+    r = v;
+    g = v;
+    b = v;
+  }
+  else {
+    int i = (int)h;
+    float f = h - i;
+    float p = v * (1.0f - s);
+    float q;
+    if (i % 2 == 0) {
+      q = v * (1.0f - (1.0f - f) * s);
+    }
+    else {
+      q = v * (1.0f - f * s);
+    }
+
+    switch (i) {
+      case 0:
+        r = v;
+        g = q;
+        b = p;
+        break;
+      case 1:
+        r = q;
+        g = v;
+        b = p;
+        break;
+      case 2:
+        r = p;
+        g = v;
+        b = q;
+        break;
+      case 3:
+        r = p;
+        g = q;
+        b = v;
+        break;
+      case 4:
+        r = q;
+        g = p;
+        b = v;
+        break;
+      case 5:
+        r = v;
+        g = p;
+        b = q;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return GColorFromRGB(r * 255, g * 255, b * 255).argb;
 }
 #endif

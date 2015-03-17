@@ -22,6 +22,9 @@ extern GContext *g_ctx;
 
 #define M_PI (3.14159265358979323846f)
 
+enum ColorMode { COLOR_MODE_RGB, COLOR_MODE_HSB };
+
+
 /* --------------------------
    Processing-like functions
    -------------------------- */
@@ -47,6 +50,7 @@ int second();
 long int millis();
 uint8_t color(float r, float g, float b);
 void background(uint8_t color);
+void colorMode(int mode);
 void fill(uint8_t color);
 void noFill();
 void stroke(uint8_t color);
