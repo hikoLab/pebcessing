@@ -185,3 +185,8 @@
 #define PASTEL_YELLOW GColorWhite
 #define WHITE GColorWhite
 #endif
+
+// Constants for colorMode()
+#define RGB COLOR_MODE_RGB
+#define HSB COLOR_MODE_HSB
+
