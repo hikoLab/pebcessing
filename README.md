@@ -94,7 +94,9 @@ void draw()
   int n = 10;
   for(int i = 0; i < n; i++){
     for(int j = 0; j < n; j++){
-      fill(color(255.0f * i / n, 255 - 255.0f * j / n, 255));
+      // Create a color from Hue, Saturation, Brightness
+      int cl = color(255.0 * i / n, 255.0 - 255.0 * j / n, 255.0); 
+      fill(cl);
       ellipse((float)width * i / n + 6, (float)height * j / n + 6, 5, 5);
     }
   }
