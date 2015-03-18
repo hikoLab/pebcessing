@@ -48,14 +48,14 @@ void frameRate(float frame_rate);
 void loop();
 void noLoop();
 void redraw();
-void size(float w, float h);
-void point(float x, float y);
-void line(float x1, float y1, float x2, float y2);
-void ellipse(float x, float y, float w, float h);
-void circle(float x, float y, float radius);
-void rect(float x1, float y1, float x2, float y2);
-void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
-void triangle(float x1, float y1, float x2, float y2, float x3, float y3);
+void size(int w, int h);
+void point(int x, int y);
+void line(int x1, int y1, int x2, int y2);
+void ellipse(int x, int y, int w, int h);
+void circle(int x, int y, int radius);
+void rect(int x1, int y1, int x2, int y2);
+void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
+void triangle(int x1, int y1, int x2, int y2, int x3, int y3);
 int year();
 int month();
 int day();
@@ -85,11 +85,11 @@ float random(float low, float high);
 GFont loadFont(uint32_t resource_id);
 GFont loadSystemFont(const char *font_key);
 void textFont(GFont font);
-void text(const char *str, float x, float y);
-void textInRect(const char *str, float x, float y, float w, float h);
+void text(const char *str, int x, int y);
+void textInRect(const char *str, int x, int y, int w, int h);
 void textAlign(int alignX);
 int textWidth(const char *str);
-int textWidthInRect(const char *str, float w, float h);
+int textWidthInRect(const char *str, int w, int h);
 
 
 /* --------------------------
