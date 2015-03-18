@@ -36,12 +36,13 @@
 #define TAU (2.0f * M_PI)
 
 // Constants for text alignment or shape draw mode
-#define LEFT GTextAlignmentLeft
-#define RIGHT GTextAlignmentRight
-#define CENTER GTextAlignmentCenter
-#define CORNER (CENTER + 0x100)
-#define CORNERS (CENTER + 0x101)
-#define RADIUS (CENTER + 0x102)
+#define LEFT DRAW_OPTION_LEFT
+#define RIGHT DRAW_OPTION_RIGHT
+#define CENTER DRAW_OPTION_CENTER
+#define CORNER DRAW_OPTION_CORNER
+#define CORNERS DRAW_OPTION_CORNERS
+#define RADIUS DRAW_OPTION_RADIUS
+
 
 // Constants for key events
 #ifdef ENABLE_KEY_EVENT
