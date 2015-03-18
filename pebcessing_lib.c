@@ -60,7 +60,7 @@ inline void redraw()
 }
 
 // do nothing
-inline void size(float w, float h)
+inline void size(int w, int h)
 {
   return;
 }
@@ -69,12 +69,12 @@ inline void size(float w, float h)
    2D Primitives
    -------------------------- */
 
-inline void point(float x, float y)
+inline void point(int x, int y)
 {
   graphics_draw_pixel(g_ctx, GPoint(x, y));
 }
 
-inline void line(float x1, float y1, float x2, float y2)
+inline void line(int x1, int y1, int x2, int y2)
 {
   graphics_draw_line(g_ctx, GPoint(x1, y1), GPoint(x2, y2));
 }
@@ -83,9 +83,12 @@ inline void line(float x1, float y1, float x2, float y2)
   Cannot draw an ellipse easily in Pebble SDK
   Therefore ellipse() draws a circle.
 */
-void ellipse(float x, float y, float w, float h)
+void ellipse(int x, int y, int w, int h)
 {
-  float radius = (w + h) / 2;
+  int radius = w;
+  if (w != h) {
+    radius = (w + h) / 2;
+  }
   circle(x, y, radius);
 }
 
@@ -93,7 +96,7 @@ void ellipse(float x, float y, float w, float h)
   Not Processing function
   Draw a circle
 */
-void circle(float x, float y, float radius)
+void circle(int x, int y, int radius)
 {
   if (!no_fill_flag) {
     graphics_fill_circle(g_ctx, GPoint(x, y), radius);
@@ -104,7 +107,7 @@ void circle(float x, float y, float radius)
   }
 }
 
-void rect(float x1, float y1, float x2, float y2)
+void rect(int x1, int y1, int x2, int y2)
 {
   if (!no_fill_flag) {
     graphics_fill_rect(g_ctx, GRect(x1, y1, x2, y2), 0, GCornerNone);
@@ -115,7 +118,7 @@ void rect(float x1, float y1, float x2, float y2)
   }
 }
 
-void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 {
   // I'd like to improve the efficiency of the below code, if possible.
 
@@ -146,7 +149,7 @@ void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, 
   gpath_destroy(path);
 }
 
-void triangle(float x1, float y1, float x2, float y2, float x3, float y3)
+void triangle(int x1, int y1, int x2, int y2, int x3, int y3)
 {
   // I'd like to improve the efficiency of the below code, if possible.
 
@@ -293,7 +296,7 @@ void background(uint8_t color)
 {
 #ifdef PBL_COLOR
   conv_black_color(&color);
-  graphics_context_set_fill_color(g_ctx, (GColor8){.argb=color});
+  graphics_context_set_fill_color(g_ctx, (GColor8){.argb = color});
 #else
   if ((GColor)color == GColorBlack) {
     graphics_context_set_fill_color(g_ctx, GColorBlack);
@@ -318,7 +321,7 @@ void fill(uint8_t color)
 {
 #ifdef PBL_COLOR
   conv_black_color(&color);
-  fill_color = (GColor8){.argb=color};
+  fill_color = (GColor8){.argb = color};
 #else
   if (color == GColorBlack) {
     fill_color = GColorBlack;
@@ -342,7 +345,7 @@ void stroke(uint8_t color)
 {
 #ifdef PBL_COLOR
   conv_black_color(&color);
-  stroke_color = (GColor8){.argb=color};
+  stroke_color = (GColor8){.argb = color};
 #else
   if (color == GColorBlack) {
     stroke_color = GColorBlack;
@@ -417,7 +420,6 @@ void setPixel(int x, int y, uint8_t color)
 void updatePixels()
 {
   if (g_canvas_frame_buffer != NULL) {
-
     graphics_draw_bitmap_in_rect(g_ctx, g_canvas_frame_buffer, gbitmap_get_bounds(g_canvas_frame_buffer));
 
     if (!graphics_release_frame_buffer(g_ctx, g_canvas_frame_buffer)) {
@@ -501,12 +503,13 @@ inline void textFont(GFont font)
   draw_font = font;
 }
 
-void text(const char *str, float x, float y)
+void text(const char *str, int x, int y)
 {
   // Calculate the horizontal alignment by myself.
-  if(text_alignment == GTextAlignmentRight){
+  if (text_alignment == GTextAlignmentRight) {
     x -= textWidth(str);
-  }else if(text_alignment == GTextAlignmentCenter){
+  }
+  else if (text_alignment == GTextAlignmentCenter) {
     x -= textWidth(str) / 2;
   }
 
@@ -515,7 +518,7 @@ void text(const char *str, float x, float y)
   graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, tmp_text_alignment, NULL);
 }
 
-void textInRect(const char *str, float x, float y, float w, float h)
+void textInRect(const char *str, int x, int y, int w, int h)
 {
   graphics_context_set_text_color(g_ctx, fill_color);
   graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, w, h), GTextOverflowModeWordWrap, text_alignment, NULL);
@@ -532,7 +535,7 @@ inline int textWidth(const char *str)
   return size.w;
 }
 
-inline int textWidthInRect(const char *str, float w, float h)
+inline int textWidthInRect(const char *str, int w, int h)
 {
   GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, w, h), GTextOverflowModeWordWrap, text_alignment);
   return size.w;
