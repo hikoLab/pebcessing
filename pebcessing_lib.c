@@ -503,22 +503,20 @@ inline void textFont(GFont font)
 
 void text(const char *str, float x, float y)
 {
-  const int16_t SHRT_MAX = 32767;
-
-  if (draw_font == NULL) {
-    draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
+  // Calculate the horizontal alignment by myself.
+  if(text_alignment == GTextAlignmentRight){
+    x -= textWidth(str);
+  }else if(text_alignment == GTextAlignmentCenter){
+    x -= textWidth(str) / 2;
   }
 
+  GTextAlignment tmp_text_alignment = GTextAlignmentLeft;
   graphics_context_set_text_color(g_ctx, fill_color);
-  graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment, NULL);
+  graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, tmp_text_alignment, NULL);
 }
 
 void textInRect(const char *str, float x, float y, float w, float h)
 {
-  if (draw_font == NULL) {
-    draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
-  }
-
   graphics_context_set_text_color(g_ctx, fill_color);
   graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, w, h), GTextOverflowModeWordWrap, text_alignment, NULL);
 }
@@ -526,6 +524,18 @@ void textInRect(const char *str, float x, float y, float w, float h)
 inline void textAlign(int alignX)
 {
   text_alignment = alignX;
+}
+
+inline int textWidth(const char *str)
+{
+  GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment);
+  return size.w;
+}
+
+inline int textWidthInRect(const char *str, float w, float h)
+{
+  GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, w, h), GTextOverflowModeWordWrap, text_alignment);
+  return size.w;
 }
 
 /* --------------------------
@@ -536,6 +546,8 @@ void init_pebcessing_lib()
 {
   fill_color = GColorWhite;
   stroke_color = GColorBlack;
+
+  draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
 }
 
 // Set the draw state before drawing the frame.

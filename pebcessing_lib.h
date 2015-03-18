@@ -20,9 +20,25 @@ extern uint16_t g_row_size_bytes;
 extern GContext *g_ctx;
 
 
-#define M_PI (3.14159265358979323846f)
+#define M_PI 3.14159265358979323846f
+#define SHRT_MIN -32768
+#define SHRT_MAX 32767
+#define INT_MIN -2147483648
+#define INT_MAX 2147483647
 
+
+// Enumerated type for colorMode()
 enum ColorMode { COLOR_MODE_RGB, COLOR_MODE_HSB };
+
+// Enumerated type for text alignment or shape draw mode
+enum DrawOption {
+  DRAW_OPTION_LEFT = GTextAlignmentLeft,
+  DRAW_OPTION_RIGHT = GTextAlignmentRight,
+  DRAW_OPTION_CENTER = GTextAlignmentCenter,
+  DRAW_OPTION_CORNER = GTextAlignmentCenter + 0x100,  // There is no particular meaning to 0x100.
+  DRAW_OPTION_CORNERS,
+  DRAW_OPTION_RADIUS
+};
 
 
 /* --------------------------
@@ -72,6 +88,9 @@ void textFont(GFont font);
 void text(const char *str, float x, float y);
 void textInRect(const char *str, float x, float y, float w, float h);
 void textAlign(int alignX);
+int textWidth(const char *str);
+int textWidthInRect(const char *str, float w, float h);
+
 
 /* --------------------------
    Functions for use in Pebcessing's internal routine
