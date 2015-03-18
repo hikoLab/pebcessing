@@ -61,10 +61,11 @@ void draw()
 
   // C-style string
   char timeStr[6];
-  snprintf(timeStr, 6, "%d:%d", hour(), minute());
+  snprintf(timeStr, 6, "%2d:%02d", hour(), minute());
 
   fill(255);
-  text(timeStr, 22, 30);
+  textAlign(CENTER);
+  text(timeStr, width / 2, 35);
 }
 
 // minuteEvent() is called every minute.
