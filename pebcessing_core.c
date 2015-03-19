@@ -18,7 +18,7 @@ static void button_pressed_handler(ClickRecognizerRef recognizer, void *context)
 {
   // Window *window = (Window *)context;
   ButtonId id = click_recognizer_get_button_id(recognizer);
-  g_key_code = id;
+  g_pblp5_key_code = id;
   keyPressed();
 }
 
@@ -26,7 +26,7 @@ static void button_released_handler(ClickRecognizerRef recognizer, void *context
 {
   // Window *window = (Window *)context;
   ButtonId id = click_recognizer_get_button_id(recognizer);
-  g_key_code = id;
+  g_pblp5_key_code = id;
   keyReleased();
 }
 
@@ -43,7 +43,7 @@ static void click_config_provider(Window *window)
 
 static void update_canvas(Layer *layer, GContext *ctx)
 {
-  g_ctx = ctx;
+  g_pblp5_context = ctx;
 
 #ifdef ENABLE_KEEP_PREVIOUS_FRAME
   // Draw the previous frame buffer.
@@ -53,23 +53,23 @@ static void update_canvas(Layer *layer, GContext *ctx)
 #endif
 
   // Set the draw state. (stroke color, fill color)
-  set_draw_state();
+  pblp5_set_draw_state();
 
-  if (g_frame_count == 0) {
+  if (g_pblp5_frame_count == 0) {
     // At the time of fisrt updating canvas, process the sketch's setup().
     setup();
 
     if (frame_rate == -1) {
-      set_frame_rate(DEFAULT_FRAME_RATE);
+      pblp5_set_frame_rate(DEFAULT_FRAME_RATE);
     }
 
-    g_frame_count = 1;
+    g_pblp5_frame_count = 1;
   }
 
   // Process the sketch's draw().
   draw();
 
-  g_frame_count++;
+  g_pblp5_frame_count++;
 
 
 #ifdef ENABLE_KEEP_PREVIOUS_FRAME
@@ -152,7 +152,7 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
   layer_set_update_proc(canvas_layer, update_canvas);
 
-  init_pebcessing_lib();
+  pblp5_init_lib();
 
 #ifdef ENABLE_KEY_EVENT
   window_set_click_config_provider(window, (ClickConfigProvider)click_config_provider);
@@ -187,8 +187,8 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
 void deinit_pebcessing(void)
 {
-  if (g_canvas_frame_buffer != NULL) {
-    gbitmap_destroy(g_canvas_frame_buffer);
+  if (g_pblp5_canvas_frame_buffer != NULL) {
+    gbitmap_destroy(g_pblp5_canvas_frame_buffer);
   }
 
 #if defined(ENABLE_SECOND_EVENT) || defined(ENABLE_MINUTE_EVENT) || defined(ENABLE_HOUR_EVENT) || defined(ENABLE_DAY_EVENT)  
@@ -204,7 +204,7 @@ void deinit_pebcessing(void)
   layer_destroy(canvas_layer);
 }
 
-void set_frame_rate(float _frame_rate)
+void pblp5_set_frame_rate(float _frame_rate)
 {
   float pre_frame_rate = frame_rate;
   frame_rate = _frame_rate;
@@ -223,12 +223,12 @@ void set_frame_rate(float _frame_rate)
   }
 }
 
-void request_update_canvas()
+void pblp5_request_update_canvas()
 {
   layer_mark_dirty(canvas_layer);
 }
 
-void enable_loop()
+void pblp5_enable_loop()
 {
   if (!loop_flag && frame_rate > 0 && update_canvas_timer == NULL) {
     update_canvas_timer = app_timer_register(1000 / frame_rate, update_canvas_timer_callback, NULL);
@@ -237,7 +237,7 @@ void enable_loop()
   loop_flag = true;
 }
 
-void disable_loop()
+void pblp5_disable_loop()
 {
   if (update_canvas_timer != NULL) {
     app_timer_cancel(update_canvas_timer);
