@@ -17,50 +17,53 @@ static float color_v3_max = 255;
    Global variables
    -------------------------- */
 
-int g_width = 144;                      // Alias of "width"
-int g_height = 168;                     // Alias of "height"
-unsigned long int g_frame_count = 0;    // Alias of "frameCount"
+int g_pblp5_width = 144;                    // Alias of "width"
+int g_pblp5_height = 168;                   // Alias of "height"
+unsigned long int g_pblp5_frame_count = 0;  // Alias of "frameCount"
 
 #ifdef ENABLE_KEY_EVENT
-ButtonId g_key_code;                    // Alias of "keyCode"
+ButtonId g_pblp5_key_code;  // Alias of "keyCode"
 #endif
 
-GBitmap *g_canvas_frame_buffer = NULL;  // A frame buffer for loadPixles(), updatePixels()
-uint8_t *g_raw_pixels;                  // An array for fast access to the frame buffer like Processing's "pixels"
-uint16_t g_row_size_bytes;              // This variable is needed for access to g_raw_pixels.
-GContext *g_ctx;
+GBitmap *g_pblp5_canvas_frame_buffer = NULL;  // A frame buffer for loadPixles(), updatePixels()
+uint8_t *g_pblp5_raw_pixels;                  // An array for fast access to the frame buffer like Processing's "pixels"
+uint16_t g_pblp5_row_size_bytes;              // This variable is needed for access to g_raw_pixels.
+GContext *g_pblp5_context;
 
 
 static void conv_black_color(uint8_t *color);
 static uint8_t get_color_from_hsb(float hue, float saturation, float brightness);
 
 
+// For convenience
+#define ctx   g_pblp5_context
+
 /* --------------------------
    Environment
    -------------------------- */
 
-inline void frameRate(float frame_rate)
+inline void pblp5_frameRate(float frame_rate)
 {
-  set_frame_rate(frame_rate);
+  pblp5_set_frame_rate(frame_rate);
 }
 
-inline void loop()
+inline void pblp5_loop()
 {
-  enable_loop();
+  pblp5_enable_loop();
 }
 
-inline void noLoop()
+inline void pblp5_noLoop()
 {
-  disable_loop();
+  pblp5_disable_loop();
 }
 
-inline void redraw()
+inline void pblp5_redraw()
 {
-  request_update_canvas();
+  pblp5_request_update_canvas();
 }
 
 // do nothing
-inline void size(int w, int h)
+inline void pblp5_size(int w, int h)
 {
   return;
 }
@@ -69,56 +72,61 @@ inline void size(int w, int h)
    2D Primitives
    -------------------------- */
 
-inline void point(int x, int y)
+inline void pblp5_point(int x, int y)
 {
-  graphics_draw_pixel(g_ctx, GPoint(x, y));
+  graphics_draw_pixel(ctx, GPoint(x, y));
 }
 
-inline void line(int x1, int y1, int x2, int y2)
+inline void pblp5_line(int x1, int y1, int x2, int y2)
 {
-  graphics_draw_line(g_ctx, GPoint(x1, y1), GPoint(x2, y2));
+  graphics_draw_line(ctx, GPoint(x1, y1), GPoint(x2, y2));
 }
 
 /*
   Cannot draw an ellipse easily in Pebble SDK
   Therefore ellipse() draws a circle.
 */
-void ellipse(int x, int y, int w, int h)
+void pblp5_ellipse(int x, int y, int w, int h)
 {
   int radius = w;
   if (w != h) {
     radius = (w + h) / 2;
   }
-  circle(x, y, radius);
+  pblp5_circle(x, y, radius);
+}
+
+void pblp5_circle(int x, int y, int radius)
+{
+  if (!no_fill_flag) {
+    graphics_fill_circle(ctx, GPoint(x, y), radius);
+  }
+
+  if (!no_stroke_flag) {
+    graphics_draw_circle(ctx, GPoint(x, y), radius);
+  }
+}
+
+void pblp5_rect(int x1, int y1, int x2, int y2)
+{
+  if (!no_fill_flag) {
+    graphics_fill_rect(ctx, GRect(x1, y1, x2, y2), 0, GCornerNone);
+  }
+
+  if (!no_stroke_flag) {
+    graphics_draw_rect(ctx, GRect(x1, y1, x2, y2));
+  }
 }
 
 /*
-  Not Processing function
-  Draw a circle
-*/
-void circle(int x, int y, int radius)
-{
-  if (!no_fill_flag) {
-    graphics_fill_circle(g_ctx, GPoint(x, y), radius);
-  }
-
-  if (!no_stroke_flag) {
-    graphics_draw_circle(g_ctx, GPoint(x, y), radius);
-  }
-}
-
-void rect(int x1, int y1, int x2, int y2)
-{
-  if (!no_fill_flag) {
-    graphics_fill_rect(g_ctx, GRect(x1, y1, x2, y2), 0, GCornerNone);
-  }
-
-  if (!no_stroke_flag) {
-    graphics_draw_rect(g_ctx, GRect(x1, y1, x2, y2));
-  }
-}
-
+  If quad macro is defined, the error "quad redefined" occurs because quad macro is already defined at "arm-cs-tools/arm-none-eabi/include/sys/types.h".
+  So pblp5_quad() is defined directly as quad() if quad macro is already defined.
+  It's not good code...
+ */
+ #ifndef quad
+void pblp5_quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+#else
 void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+#endif
 {
   // I'd like to improve the efficiency of the below code, if possible.
 
@@ -139,17 +147,17 @@ void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
   GPath *path = gpath_create(&path_info);
 
   if (!no_fill_flag) {
-    gpath_draw_filled(g_ctx, path);
+    gpath_draw_filled(ctx, path);
   }
 
   if (!no_stroke_flag) {
-    gpath_draw_outline(g_ctx, path);
+    gpath_draw_outline(ctx, path);
   }
 
   gpath_destroy(path);
 }
 
-void triangle(int x1, int y1, int x2, int y2, int x3, int y3)
+void pblp5_triangle(int x1, int y1, int x2, int y2, int x3, int y3)
 {
   // I'd like to improve the efficiency of the below code, if possible.
 
@@ -168,11 +176,11 @@ void triangle(int x1, int y1, int x2, int y2, int x3, int y3)
   GPath *path = gpath_create(&path_info);
 
   if (!no_fill_flag) {
-    gpath_draw_filled(g_ctx, path);
+    gpath_draw_filled(ctx, path);
   }
 
   if (!no_stroke_flag) {
-    gpath_draw_outline(g_ctx, path);
+    gpath_draw_outline(ctx, path);
   }
 
   gpath_destroy(path);
@@ -183,7 +191,7 @@ void triangle(int x1, int y1, int x2, int y2, int x3, int y3)
    Time & Date
    -------------------------- */
 
-int year()
+int pblp5_year()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
@@ -191,7 +199,7 @@ int year()
 }
 
 // return value : 1-12
-int month()
+int pblp5_month()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
@@ -199,19 +207,16 @@ int month()
 }
 
 // return value : 1-31
-int day()
+int pblp5_day()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   return current_time->tm_mday;
 }
 
-/*
-  Not Processing function
-  Return the day of the week
-*/
+// Return the day of the week
 // return value : 0-6
-int wday()
+int pblp5_wday()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
@@ -219,7 +224,7 @@ int wday()
 }
 
 // return value : 0-23
-int hour()
+int pblp5_hour()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
@@ -227,7 +232,7 @@ int hour()
 }
 
 // return value : 0-59
-int minute()
+int pblp5_minute()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
@@ -235,14 +240,14 @@ int minute()
 }
 
 // return value : 0-61 (60 or 61 are leap-seconds)
-int second()
+int pblp5_second()
 {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   return current_time->tm_sec;
 }
 
-long int millis()
+long int pblp5_millis()
 {
   time_t sec;
   uint16_t ms;
@@ -254,7 +259,7 @@ long int millis()
    Color
    -------------------------- */
 
-uint8_t color(float v1, float v2, float v3)
+uint8_t pblp5_color(float v1, float v2, float v3)
 {
   if (v1 < 0)
     v1 = 0;
@@ -292,32 +297,32 @@ uint8_t color(float v1, float v2, float v3)
 #endif
 }
 
-void background(uint8_t color)
+void pblp5_background(uint8_t color)
 {
 #ifdef PBL_COLOR
   conv_black_color(&color);
-  graphics_context_set_fill_color(g_ctx, (GColor8){.argb = color});
+  graphics_context_set_fill_color(ctx, (GColor8){.argb = color});
 #else
   if ((GColor)color == GColorBlack) {
-    graphics_context_set_fill_color(g_ctx, GColorBlack);
+    graphics_context_set_fill_color(ctx, GColorBlack);
   }
   else {
-    graphics_context_set_fill_color(g_ctx, GColorWhite);
+    graphics_context_set_fill_color(ctx, GColorWhite);
   }
 #endif
-  graphics_fill_rect(g_ctx, GRect(0, 0, g_width, g_height), 0, GCornerNone);
+  graphics_fill_rect(ctx, GRect(0, 0, g_pblp5_width, g_pblp5_height), 0, GCornerNone);
 
-  graphics_context_set_fill_color(g_ctx, fill_color);
+  graphics_context_set_fill_color(ctx, fill_color);
 }
 
-inline void colorMode(int mode)
+inline void pblp5_colorMode(int mode)
 {
 #ifdef PBL_COLOR
   color_mode = mode;
 #endif
 }
 
-void fill(uint8_t color)
+void pblp5_fill(uint8_t color)
 {
 #ifdef PBL_COLOR
   conv_black_color(&color);
@@ -331,17 +336,17 @@ void fill(uint8_t color)
   }
 #endif
 
-  graphics_context_set_fill_color(g_ctx, fill_color);
+  graphics_context_set_fill_color(ctx, fill_color);
 
   no_fill_flag = false;
 }
 
-inline void noFill()
+inline void pblp5_noFill()
 {
   no_fill_flag = true;
 }
 
-void stroke(uint8_t color)
+void pblp5_stroke(uint8_t color)
 {
 #ifdef PBL_COLOR
   conv_black_color(&color);
@@ -354,12 +359,12 @@ void stroke(uint8_t color)
     stroke_color = GColorWhite;
   }
 #endif
-  graphics_context_set_stroke_color(g_ctx, stroke_color);
+  graphics_context_set_stroke_color(ctx, stroke_color);
 
   no_stroke_flag = false;
 }
 
-inline void noStroke()
+inline void pblp5_noStroke()
 {
   no_stroke_flag = true;
 }
@@ -368,64 +373,64 @@ inline void noStroke()
    Image - Pixels
    -------------------------- */
 
-uint8_t getPixel(int x, int y)
+uint8_t pblp5_getPixel(int x, int y)
 {
-  if (g_canvas_frame_buffer != NULL) {
-    if (0 <= x && x < g_width && 0 <= y && y < g_height) {
+  if (g_pblp5_canvas_frame_buffer != NULL) {
+    if (0 <= x && x < g_pblp5_width && 0 <= y && y < g_pblp5_height) {
 #ifdef PBL_COLOR
-      uint8_t color = g_raw_pixels[x + y * g_row_size_bytes];
+      uint8_t color = g_pblp5_raw_pixels[x + y * g_pblp5_row_size_bytes];
       conv_black_color(&color);
       return color;
 #else
       uint8_t n = x % 8;
-      return (g_raw_pixels[x / 8 + y * g_row_size_bytes] & (1 << n)) >> n;
+      return (g_pblp5_raw_pixels[x / 8 + y * g_pblp5_row_size_bytes] & (1 << n)) >> n;
 #endif
     }
   }
   return 0;
 }
 
-void loadPixels()
+void pblp5_loadPixels()
 {
-  g_canvas_frame_buffer = graphics_capture_frame_buffer(g_ctx);
+  g_pblp5_canvas_frame_buffer = graphics_capture_frame_buffer(ctx);
 
-  if (g_canvas_frame_buffer == NULL) {
+  if (g_pblp5_canvas_frame_buffer == NULL) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_capture_frame_buffer() at loadPixels()");
     return;
   }
 
-  g_raw_pixels = gbitmap_get_data(g_canvas_frame_buffer);
-  g_row_size_bytes = gbitmap_get_bytes_per_row(g_canvas_frame_buffer);
+  g_pblp5_raw_pixels = gbitmap_get_data(g_pblp5_canvas_frame_buffer);
+  g_pblp5_row_size_bytes = gbitmap_get_bytes_per_row(g_pblp5_canvas_frame_buffer);
 }
 
-void setPixel(int x, int y, uint8_t color)
+void pblp5_setPixel(int x, int y, uint8_t color)
 {
-  if (g_canvas_frame_buffer != NULL) {
-    if (0 <= x && x < g_width && 0 <= y && y < g_height) {
+  if (g_pblp5_canvas_frame_buffer != NULL) {
+    if (0 <= x && x < g_pblp5_width && 0 <= y && y < g_pblp5_height) {
 #ifdef PBL_COLOR
       conv_black_color(&color);
-      g_raw_pixels[x + y * g_row_size_bytes] = color;
+      g_pblp5_raw_pixels[x + y * g_pblp5_row_size_bytes] = color;
 #else
       if (color == 0) {
-        g_raw_pixels[x / 8 + y * g_row_size_bytes] &= ~(1 << (x % 8));
+        g_pblp5_raw_pixels[x / 8 + y * g_pblp5_row_size_bytes] &= ~(1 << (x % 8));
       }
       else {
-        g_raw_pixels[x / 8 + y * g_row_size_bytes] |= 1 << (x % 8);
+        g_pblp5_raw_pixels[x / 8 + y * g_pblp5_row_size_bytes] |= 1 << (x % 8);
       }
 #endif
     }
   }
 }
 
-void updatePixels()
+void pblp5_updatePixels()
 {
-  if (g_canvas_frame_buffer != NULL) {
-    graphics_draw_bitmap_in_rect(g_ctx, g_canvas_frame_buffer, gbitmap_get_bounds(g_canvas_frame_buffer));
+  if (g_pblp5_canvas_frame_buffer != NULL) {
+    graphics_draw_bitmap_in_rect(ctx, g_pblp5_canvas_frame_buffer, gbitmap_get_bounds(g_pblp5_canvas_frame_buffer));
 
-    if (!graphics_release_frame_buffer(g_ctx, g_canvas_frame_buffer)) {
+    if (!graphics_release_frame_buffer(ctx, g_pblp5_canvas_frame_buffer)) {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_release_frame_buffer() at updatePixels()");
     }
-    g_canvas_frame_buffer = NULL;
+    g_pblp5_canvas_frame_buffer = NULL;
   }
 }
 
@@ -433,24 +438,24 @@ void updatePixels()
    Trigonometry
    -------------------------- */
 
-// sin() conflicts the compiler's built-in funciton, so this function is renamed _sin().
-inline float _sin(float angle)
+// sin() conflicts the compiler's built-in funciton, so this function is renamed pblp5_sin().
+inline float pblp5_sin(float angle)
 {
   return (float)sin_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * M_PI))) / TRIG_MAX_RATIO;
 }
 
-// cos() conflicts the compiler's built-in funciton, so this function is renamed _cos().
-inline float _cos(float angle)
+// cos() conflicts the compiler's built-in funciton, so this function is renamed pblp5_cos().
+inline float pblp5_cos(float angle)
 {
   return (float)cos_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * M_PI))) / TRIG_MAX_RATIO;
 }
 
-inline float radians(float degrees)
+inline float pblp5_radians(float degrees)
 {
   return degrees * M_PI / 180.0f;
 }
 
-inline float degrees(float radians)
+inline float pblp5_degrees(float radians)
 {
   return radians * 180.0f / M_PI;
 }
@@ -459,7 +464,7 @@ inline float degrees(float radians)
    Random
    -------------------------- */
 
-inline float random(float low, float high)
+inline float pblp5_random(float low, float high)
 {
   float rnd = (float)rand() / RAND_MAX;
   return rnd * (high - low) + low;
@@ -469,7 +474,7 @@ inline float random(float low, float high)
    Calculation
    -------------------------- */
 
-float constrain(float value, float low, float high)
+float pblp5_constrain(float value, float low, float high)
 {
   if (value < low)
     return low;
@@ -479,7 +484,7 @@ float constrain(float value, float low, float high)
   return value;
 }
 
-inline float map(float value, float start1, float stop1, float start2, float stop2)
+inline float pblp5_map(float value, float start1, float stop1, float start2, float stop2)
 {
   return (value - start1) * (stop2 - start2) / (stop1 - start1) + start2;
 }
@@ -488,54 +493,54 @@ inline float map(float value, float start1, float stop1, float start2, float sto
    Typography
    -------------------------- */
 
-inline GFont loadFont(uint32_t resource_id)
+inline GFont pblp5_loadFont(uint32_t resource_id)
 {
   return fonts_load_custom_font(resource_get_handle(resource_id));
 }
 
-inline GFont loadSystemFont(const char *font_key)
+inline GFont pblp5_loadSystemFont(const char *font_key)
 {
   return fonts_get_system_font(font_key);
 }
 
-inline void textFont(GFont font)
+inline void pblp5_textFont(GFont font)
 {
   draw_font = font;
 }
 
-void text(const char *str, int x, int y)
+void pblp5_text(const char *str, int x, int y)
 {
   // Calculate the horizontal alignment by myself.
   if (text_alignment == GTextAlignmentRight) {
-    x -= textWidth(str);
+    x -= pblp5_textWidth(str);
   }
   else if (text_alignment == GTextAlignmentCenter) {
-    x -= textWidth(str) / 2;
+    x -= pblp5_textWidth(str) / 2;
   }
 
   GTextAlignment tmp_text_alignment = GTextAlignmentLeft;
-  graphics_context_set_text_color(g_ctx, fill_color);
-  graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, tmp_text_alignment, NULL);
+  graphics_context_set_text_color(ctx, fill_color);
+  graphics_draw_text(ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, tmp_text_alignment, NULL);
 }
 
-void textInRect(const char *str, int x, int y, int w, int h)
+void pblp5_textInRect(const char *str, int x, int y, int w, int h)
 {
-  graphics_context_set_text_color(g_ctx, fill_color);
-  graphics_draw_text(g_ctx, str, draw_font, GRect(x, y, w, h), GTextOverflowModeWordWrap, text_alignment, NULL);
+  graphics_context_set_text_color(ctx, fill_color);
+  graphics_draw_text(ctx, str, draw_font, GRect(x, y, w, h), GTextOverflowModeWordWrap, text_alignment, NULL);
 }
 
-inline void textAlign(int alignX)
+inline void pblp5_textAlign(int alignX)
 {
   text_alignment = alignX;
 }
 
-inline int textWidth(const char *str)
+inline int pblp5_textWidth(const char *str)
 {
   GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment);
   return size.w;
 }
 
-inline int textWidthInRect(const char *str, int w, int h)
+inline int pblp5_textWidthInRect(const char *str, int w, int h)
 {
   GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, w, h), GTextOverflowModeWordWrap, text_alignment);
   return size.w;
@@ -545,7 +550,7 @@ inline int textWidthInRect(const char *str, int w, int h)
    Functions for use in Pebcessing's internal routine
    -------------------------- */
 
-void init_pebcessing_lib()
+void pblp5_init_lib()
 {
   fill_color = GColorWhite;
   stroke_color = GColorBlack;
@@ -554,10 +559,10 @@ void init_pebcessing_lib()
 }
 
 // Set the draw state before drawing the frame.
-void set_draw_state()
+void pblp5_set_draw_state()
 {
-  graphics_context_set_fill_color(g_ctx, fill_color);
-  graphics_context_set_stroke_color(g_ctx, stroke_color);
+  graphics_context_set_fill_color(ctx, fill_color);
+  graphics_context_set_stroke_color(ctx, stroke_color);
 }
 
 #ifdef PBL_COLOR
