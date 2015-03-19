@@ -534,6 +534,17 @@ inline void pblp5_textAlign(int alignX)
   text_alignment = alignX;
 }
 
+inline GSize pblp5_textContentSize(const char *str)
+{
+  return graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment);
+}
+
+inline int pblp5_textHeight(const char *str)
+{
+  GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment);
+  return size.h;  
+}
+
 inline int pblp5_textWidth(const char *str)
 {
   GSize size = graphics_text_layout_get_content_size(str, draw_font, GRect(0, 0, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, text_alignment);

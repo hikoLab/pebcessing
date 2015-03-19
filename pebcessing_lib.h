@@ -92,6 +92,8 @@ void pblp5_textFont(GFont font);
 void pblp5_text(const char *str, int x, int y);
 void pblp5_textInRect(const char *str, int x, int y, int w, int h);
 void pblp5_textAlign(int alignX);
+GSize pblp5_textContentSize(const char *str);
+int pblp5_textHeight(const char *str);
 int pblp5_textWidth(const char *str);
 int pblp5_textWidthInRect(const char *str, int w, int h);
 

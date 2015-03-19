@@ -62,6 +62,8 @@
 #define text(str, x, y)       pblp5_text(str, x, y)
 #define textInRect(str, x, y, w, h)  pblp5_textInRect(str, x, y, w, h)
 #define textAlign(alignX)     pblp5_textAlign(alignX)
+#define textContentSize(str)  pblp5_textContentSize(str)
+#define textHeight(str)       pblp5_textHeight(str)
 #define textWidth(str)        pblp5_textWidth(str)
 #define textWidthInRect(str, w, h)  pblp5_textWidthInRect(str, w, h)
 /*
