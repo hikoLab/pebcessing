@@ -11,6 +11,7 @@ static int color_mode = COLOR_MODE_RGB;
 static float color_v1_max = 255;
 static float color_v2_max = 255;
 static float color_v3_max = 255;
+static long int pblp5_init_time;
 
 
 /* --------------------------
@@ -252,7 +253,7 @@ long int pblp5_millis()
   time_t sec;
   uint16_t ms;
   time_ms(&sec, &ms);
-  return sec * 1000 + ms;
+  return sec * 1000 + ms - pblp5_init_time;
 }
 
 /* --------------------------
@@ -567,6 +568,11 @@ void pblp5_init_lib()
   stroke_color = GColorBlack;
 
   draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
+
+  time_t sec;
+  uint16_t ms;
+  time_ms(&sec, &ms);
+  pblp5_init_time =  sec * 1000 + ms;
 }
 
 // Set the draw state before drawing the frame.
