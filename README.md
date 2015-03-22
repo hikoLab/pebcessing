@@ -34,9 +34,9 @@ void draw()
   rect(x, y, r, r);
 }
 ```
-![example1](https://raw.githubusercontent.com/hikoLab/pebcessing/images/images/screenshot_random_rect.png)
+![example1](https://raw.githubusercontent.com/hikoLab/pebcessing/images/images/screenshot_random_rect.png) (*This image is a screenshot of the Pebble emulator.*)
 
-The next example is a digital watch for the Pebble Time. We can use colors easily in Pebcessing. 
+The next example is a digital watch for the Pebble Time. We can create colors with color().
 
 ```Processing
 #include "sketch.h"
@@ -77,7 +77,7 @@ void minuteEvent()
 ```
 ![example2](https://github.com/hikoLab/pebcessing/blob/images/images/screenshot_digital_watch.png)
 
-And we can also use HSB colors.
+We can also use HSB colors.
 
 ```Processing
 #include "sketch.h"
@@ -98,12 +98,44 @@ void draw()
       // Create a color from Hue, Saturation, Brightness
       int cl = color(255.0 * i / n, 255.0 - 255.0 * j / n, 255.0); 
       fill(cl);
-      ellipse((float)width * i / n + 6, (float)height * j / n + 6, 5, 5);
+      ellipse((float)width * i / n + 6, (float)height * j / n + 6, 10, 10);
     }
   }
 }
 ```
 ![example3](https://github.com/hikoLab/pebcessing/blob/images/images/screenshot_hsb_ex.png)
+
+An example of translate(), rotate(). Currently, it's possible to rotate only primitive shapes.
+
+```Processing
+#include "sketch.h"
+#include "pebcessing/def_for_sketch.h"
+
+void setup()
+{
+  colorMode(HSB);
+  noStroke();
+  noLoop();
+}
+
+void draw()
+{
+  background(255);
+
+  translate(width / 2 + 15, 0);
+
+  for(int i = 0; i < 18; i++){
+    fill(color(i * 255 / 18, 255, 255));
+    rect(0,0,30,30);
+    fill(color(i * 255 / 18, 100, 255));
+    rect(0,40,20,20);
+
+    rotate(radians(20));
+    translate(30, 0);
+  }
+}
+```
+![example4](https://github.com/hikoLab/pebcessing/blob/images/images/screenshot_rotate_ex.png)
 
 
 ##Differences with Processing
@@ -114,13 +146,20 @@ For instance, we cannot use "class" because C-language is not object oriented, a
 
 And Pebcessing contains some functions that are not same as Processing because of the Pebble's specification.
 
-See the reference to know available functions in Pebcessing. (*The reference is being prepared. Coming soon.*)
+See the reference to know available functions in Pebcessing. 
 
 ## How to build
 
-If you've already set up the Pebble SDK 3.0, you can build this repository with `pebble build`. 
+### Build on your local computer
 
-We can build with [CloudPebble](https://cloudpebble.net/ "CloudPebble") as well. 
+If you've already set up the Pebble SDK 3.0, you can build this repository with `pebble build`. And enter the command to install it to the emulator or your Pebble watch.
+* `pebble install --emulator aplite`
+* `pebble install --emulator basalt`
+* `pebble install --phone [your IP address]`
+
+### Build on CloudPebble
+
+You can build with [CloudPebble](https://cloudpebble.net/ "CloudPebble") as well. 
 The procedure for building apps is as follows:
 
 1. Log in to [CloudPebble](https://cloudpebble.net/ "CloudPebble").
@@ -130,10 +169,23 @@ The procedure for building apps is as follows:
   * GITHUB PROJECT: https://github.com/hikoLab/pebcessing
 4. And then, click "IMPORT".
 
-Let's build and run the app on the emulator. 
+Let's build and run the app on the emulator. And it's possible to install it to your Pebble watch.
 
 ## How to use
 
 Basically, the files to be edited are "sketch.c" and "setting.h". 
 
 ...
+
+## Reference
+
+[Pebcessing Reference](http://hikolab.github.io/pebcessing/index.html "Pebcessing Reference")
+
+*This reference is in progress.*
+
+## License
+Code released under the MIT license. 
+
+Reference released under Creative Commons. It's based on Processing's reference by Processing.org. 
+
+
