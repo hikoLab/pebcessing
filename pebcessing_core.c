@@ -52,8 +52,8 @@ static void update_canvas(Layer *layer, GContext *ctx)
   }
 #endif
 
-  // Set the draw state. (stroke color, fill color)
-  pblp5_set_draw_state();
+  // Initialize the draw state.
+  pblp5_init_draw_state();
 
   if (g_pblp5_frame_count == 0) {
     // At the time of fisrt updating canvas, process the sketch's setup().
@@ -187,6 +187,8 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
 void deinit_pebcessing(void)
 {
+  pblp5_deinit_lib();
+
   if (g_pblp5_canvas_frame_buffer != NULL) {
     gbitmap_destroy(g_pblp5_canvas_frame_buffer);
   }

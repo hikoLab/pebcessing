@@ -69,6 +69,8 @@ int pblp5_hour();
 int pblp5_minute();
 int pblp5_second();
 long int pblp5_millis();
+void pblp5_rotate(float angle);
+void pblp5_translate(float x, float y);
 uint8_t pblp5_color(float r, float g, float b);
 void pblp5_background(uint8_t color);
 void pblp5_colorMode(int mode);
@@ -103,4 +105,5 @@ int pblp5_textWidthInRect(const char *str, int w, int h);
    Functions for use in Pebcessing's internal routine
    -------------------------- */
 void pblp5_init_lib();
-void pblp5_set_draw_state();
+void pblp5_deinit_lib();
+void pblp5_init_draw_state();
