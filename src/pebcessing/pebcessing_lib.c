@@ -311,9 +311,13 @@ void pblp5_rotate(float angle)
 
   calculated_rotate_angle = TRIG_MAX_ANGLE * rotate_angle / (2 * M_PI);
 
-  calculated_rotate_angle %= TRIG_MAX_ANGLE;
-  if (calculated_rotate_angle < 0) {
-    calculated_rotate_angle += TRIG_MAX_ANGLE;
+  if (calculated_rotate_angle < 0 || calculated_rotate_angle > TRIG_MAX_ANGLE) {
+    calculated_rotate_angle %= TRIG_MAX_ANGLE;
+    if (calculated_rotate_angle < 0) {
+      calculated_rotate_angle += TRIG_MAX_ANGLE;
+    }
+
+    rotate_angle = (float)calculated_rotate_angle * 2 * M_PI / TRIG_MAX_ANGLE;
   }
 }
 
