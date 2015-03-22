@@ -13,6 +13,22 @@ static float color_v2_max = 255;
 static float color_v3_max = 255;
 static int ellipse_mode = DRAW_OPTION_CENTER;
 static long int pblp5_init_time;
+static float translate_x = 0;
+static float translate_y = 0;
+static float rotate_angle = 0;
+static int32_t calculated_rotate_angle = 0;
+
+static GPath *line_path = NULL;
+static const GPathInfo LINE_PATH_INFO = {.num_points = 2, .points = (GPoint[]){{0, 0}, {0, 0}}};
+static GPath *triangle_path = NULL;
+static const GPathInfo TRIANGLE_PATH_INFO = {.num_points = 3, .points = (GPoint[]){{0, 0}, {0, 0}, {0, 0}}};
+static GPath *quad_path = NULL;
+static const GPathInfo QUAD_PATH_INFO = {.num_points = 4, .points = (GPoint[]){{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
+
+
+static void convert_transformed_pos(int *x, int *y);
+static void convert_black_color(uint8_t *color);
+static uint8_t get_color_from_hsb(float hue, float saturation, float brightness);
 
 
 /* --------------------------
@@ -33,12 +49,9 @@ uint16_t g_pblp5_row_size_bytes;              // This variable is needed for acc
 GContext *g_pblp5_context;
 
 
-static void conv_black_color(uint8_t *color);
-static uint8_t get_color_from_hsb(float hue, float saturation, float brightness);
-
-
 // For convenience
 #define ctx   g_pblp5_context
+
 
 /* --------------------------
    Environment
@@ -74,14 +87,32 @@ inline void pblp5_size(int w, int h)
    2D Primitives
    -------------------------- */
 
-inline void pblp5_point(int x, int y)
+void pblp5_point(int x, int y)
 {
-  graphics_draw_pixel(ctx, GPoint(x, y));
+  if (!no_stroke_flag) {
+    convert_transformed_pos(&x, &y);
+    graphics_draw_pixel(ctx, GPoint(x, y));
+  }
 }
 
-inline void pblp5_line(int x1, int y1, int x2, int y2)
+void pblp5_line(int x1, int y1, int x2, int y2)
 {
-  graphics_draw_line(ctx, GPoint(x1, y1), GPoint(x2, y2));
+  if (no_stroke_flag) return;
+
+  if (rotate_angle == 0) {
+    graphics_draw_line(ctx, GPoint(x1 + translate_x, y1 + translate_y), GPoint(x2 + translate_x, y2 + translate_y));
+  }
+  else {
+    line_path->points[0].x = x1;
+    line_path->points[0].y = y1;
+    line_path->points[1].x = x2;
+    line_path->points[1].y = y2;
+
+    gpath_rotate_to(line_path, calculated_rotate_angle);
+    gpath_move_to(line_path, GPoint(translate_x, translate_y));
+
+    gpath_draw_outline(ctx, line_path);
+  }
 }
 
 /*
@@ -117,6 +148,8 @@ void pblp5_circle(int x, int y, int w)
       radius = w / 2;
   }
 
+  convert_transformed_pos(&x, &y);
+
   if (!no_fill_flag) {
     graphics_fill_circle(ctx, GPoint(x, y), radius);
   }
@@ -128,12 +161,19 @@ void pblp5_circle(int x, int y, int w)
 
 void pblp5_rect(int x1, int y1, int x2, int y2)
 {
-  if (!no_fill_flag) {
-    graphics_fill_rect(ctx, GRect(x1, y1, x2, y2), 0, GCornerNone);
-  }
+  if (rotate_angle == 0) {
+    x1 += translate_x;
+    y1 += translate_y;
 
-  if (!no_stroke_flag) {
-    graphics_draw_rect(ctx, GRect(x1, y1, x2, y2));
+    if (!no_fill_flag) {
+      graphics_fill_rect(ctx, GRect(x1, y1, x2, y2), 0, GCornerNone);
+    }
+    if (!no_stroke_flag) {
+      graphics_draw_rect(ctx, GRect(x1, y1, x2, y2));
+    }
+  }
+  else {
+    quad(x1, y1, x1 + x2, y1, x1 + x2, y1 + y2, x1, y1 + y2);
   }
 }
 
@@ -148,65 +188,47 @@ void pblp5_quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 #endif
 {
-  // I'd like to improve the efficiency of the below code, if possible.
+  quad_path->points[0].x = x1;
+  quad_path->points[0].y = y1;
+  quad_path->points[1].x = x2;
+  quad_path->points[1].y = y2;
+  quad_path->points[2].x = x3;
+  quad_path->points[2].y = y3;
+  quad_path->points[3].x = x4;
+  quad_path->points[3].y = y4;
 
-  GPoint points[4];
-  points[0].x = x1;
-  points[0].y = y1;
-  points[1].x = x2;
-  points[1].y = y2;
-  points[2].x = x3;
-  points[2].y = y3;
-  points[3].x = x4;
-  points[3].y = y4;
-
-  GPathInfo path_info;
-  path_info.num_points = 4;
-  path_info.points = points;
-
-  GPath *path = gpath_create(&path_info);
+  gpath_rotate_to(quad_path, calculated_rotate_angle);
+  gpath_move_to(quad_path, GPoint(translate_x, translate_y));
 
   if (!no_fill_flag) {
-    gpath_draw_filled(ctx, path);
+    gpath_draw_filled(ctx, quad_path);
   }
-
   if (!no_stroke_flag) {
-    gpath_draw_outline(ctx, path);
+    gpath_draw_outline(ctx, quad_path);
   }
-
-  gpath_destroy(path);
 }
 
 void pblp5_triangle(int x1, int y1, int x2, int y2, int x3, int y3)
 {
-  // I'd like to improve the efficiency of the below code, if possible.
+  triangle_path->points[0].x = x1;
+  triangle_path->points[0].y = y1;
+  triangle_path->points[1].x = x2;
+  triangle_path->points[1].y = y2;
+  triangle_path->points[2].x = x3;
+  triangle_path->points[2].y = y3;
 
-  GPoint points[3];
-  points[0].x = x1;
-  points[0].y = y1;
-  points[1].x = x2;
-  points[1].y = y2;
-  points[2].x = x3;
-  points[2].y = y3;
-
-  GPathInfo path_info;
-  path_info.num_points = 3;
-  path_info.points = points;
-
-  GPath *path = gpath_create(&path_info);
+  gpath_rotate_to(triangle_path, calculated_rotate_angle);
+  gpath_move_to(triangle_path, GPoint(translate_x, translate_y));
 
   if (!no_fill_flag) {
-    gpath_draw_filled(ctx, path);
+    gpath_draw_filled(ctx, triangle_path);
   }
-
   if (!no_stroke_flag) {
-    gpath_draw_outline(ctx, path);
+    gpath_draw_outline(ctx, triangle_path);
   }
-
-  gpath_destroy(path);
 }
 
-void pblp5_ellipseMode(int mode)
+inline void pblp5_ellipseMode(int mode)
 {
   ellipse_mode = mode;
 }
@@ -280,6 +302,30 @@ long int pblp5_millis()
 }
 
 /* --------------------------
+   Transform
+   -------------------------- */
+
+void pblp5_rotate(float angle)
+{
+  rotate_angle += angle;
+
+  calculated_rotate_angle = TRIG_MAX_ANGLE * rotate_angle / (2 * M_PI);
+
+  calculated_rotate_angle %= TRIG_MAX_ANGLE;
+  if (calculated_rotate_angle < 0) {
+    calculated_rotate_angle += TRIG_MAX_ANGLE;
+  }
+}
+
+void pblp5_translate(float x, float y)
+{
+  float c = pblp5_cos(rotate_angle);
+  float s = pblp5_sin(rotate_angle);
+  translate_x += x * c - y * s;
+  translate_y += x * s + y * c;
+}
+
+/* --------------------------
    Color
    -------------------------- */
 
@@ -308,7 +354,7 @@ uint8_t pblp5_color(float v1, float v2, float v3)
   else if (color_mode == COLOR_MODE_HSB) {
     color = get_color_from_hsb(v1, v2, v3);
   }
-  conv_black_color(&color);
+  convert_black_color(&color);
   return color;
 #else
   // Calculate gray scale of the RGB color
@@ -324,7 +370,7 @@ uint8_t pblp5_color(float v1, float v2, float v3)
 void pblp5_background(uint8_t color)
 {
 #ifdef PBL_COLOR
-  conv_black_color(&color);
+  convert_black_color(&color);
   graphics_context_set_fill_color(ctx, (GColor8){.argb = color});
 #else
   if ((GColor)color == GColorBlack) {
@@ -349,7 +395,7 @@ inline void pblp5_colorMode(int mode)
 void pblp5_fill(uint8_t color)
 {
 #ifdef PBL_COLOR
-  conv_black_color(&color);
+  convert_black_color(&color);
   fill_color = (GColor8){.argb = color};
 #else
   if (color == GColorBlack) {
@@ -373,7 +419,7 @@ inline void pblp5_noFill()
 void pblp5_stroke(uint8_t color)
 {
 #ifdef PBL_COLOR
-  conv_black_color(&color);
+  convert_black_color(&color);
   stroke_color = (GColor8){.argb = color};
 #else
   if (color == GColorBlack) {
@@ -403,7 +449,7 @@ uint8_t pblp5_getPixel(int x, int y)
     if (0 <= x && x < g_pblp5_width && 0 <= y && y < g_pblp5_height) {
 #ifdef PBL_COLOR
       uint8_t color = g_pblp5_raw_pixels[x + y * g_pblp5_row_size_bytes];
-      conv_black_color(&color);
+      convert_black_color(&color);
       return color;
 #else
       uint8_t n = x % 8;
@@ -432,7 +478,7 @@ void pblp5_setPixel(int x, int y, uint8_t color)
   if (g_pblp5_canvas_frame_buffer != NULL) {
     if (0 <= x && x < g_pblp5_width && 0 <= y && y < g_pblp5_height) {
 #ifdef PBL_COLOR
-      conv_black_color(&color);
+      convert_black_color(&color);
       g_pblp5_raw_pixels[x + y * g_pblp5_row_size_bytes] = color;
 #else
       if (color == 0) {
@@ -462,13 +508,11 @@ void pblp5_updatePixels()
    Trigonometry
    -------------------------- */
 
-// sin() conflicts the compiler's built-in funciton, so this function is renamed pblp5_sin().
 inline float pblp5_sin(float angle)
 {
   return (float)sin_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * M_PI))) / TRIG_MAX_RATIO;
 }
 
-// cos() conflicts the compiler's built-in funciton, so this function is renamed pblp5_cos().
 inline float pblp5_cos(float angle)
 {
   return (float)cos_lookup((int32_t)(angle * TRIG_MAX_ANGLE / (2 * M_PI))) / TRIG_MAX_RATIO;
@@ -542,6 +586,8 @@ void pblp5_text(const char *str, int x, int y)
     x -= pblp5_textWidth(str) / 2;
   }
 
+  convert_transformed_pos(&x, &y);
+
   GTextAlignment tmp_text_alignment = GTextAlignmentLeft;
   graphics_context_set_text_color(ctx, fill_color);
   graphics_draw_text(ctx, str, draw_font, GRect(x, y, SHRT_MAX, SHRT_MAX), GTextOverflowModeWordWrap, tmp_text_alignment, NULL);
@@ -549,6 +595,8 @@ void pblp5_text(const char *str, int x, int y)
 
 void pblp5_textInRect(const char *str, int x, int y, int w, int h)
 {
+  convert_transformed_pos(&x, &y);
+
   graphics_context_set_text_color(ctx, fill_color);
   graphics_draw_text(ctx, str, draw_font, GRect(x, y, w, h), GTextOverflowModeWordWrap, text_alignment, NULL);
 }
@@ -592,17 +640,49 @@ void pblp5_init_lib()
 
   draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
 
+  line_path = gpath_create(&LINE_PATH_INFO);
+  triangle_path = gpath_create(&TRIANGLE_PATH_INFO);
+  quad_path = gpath_create(&QUAD_PATH_INFO);
+
   time_t sec;
   uint16_t ms;
   time_ms(&sec, &ms);
   pblp5_init_time =  sec * 1000 + ms;
 }
 
-// Set the draw state before drawing the frame.
-void pblp5_set_draw_state()
+void pblp5_deinit_lib()
+{
+  gpath_destroy(quad_path);
+  gpath_destroy(triangle_path);
+  gpath_destroy(line_path);
+}
+
+// Initialize the draw state before drawing the frame.
+void pblp5_init_draw_state()
 {
   graphics_context_set_fill_color(ctx, fill_color);
   graphics_context_set_stroke_color(ctx, stroke_color);
+
+  translate_x = 0;
+  translate_y = 0;
+  rotate_angle = 0;
+  calculated_rotate_angle = 0;
+}
+
+static void convert_transformed_pos(int *x, int *y)
+{
+  if (rotate_angle == 0) {
+    *x += translate_x;
+    *y += translate_y;
+  }
+  else {
+    float c = pblp5_cos(rotate_angle);
+    float s = pblp5_sin(rotate_angle);
+    int tmp_x = (float)(*x) * c - (float)(*y) * s + translate_x;
+    int tmp_y = (float)(*x) * s + (float)(*y) * c + translate_y;
+    *x = tmp_x;
+    *y = tmp_y;
+  }
 }
 
 #ifdef PBL_COLOR
@@ -610,7 +690,7 @@ void pblp5_set_draw_state()
 // Convert black color (Swap 0b11000000 <-> 0b00000000)
 // The color of fill(0) is black in Processing, but GColorBlack is 0b11000000.
 // So convert a value of a color by this function.
-static void conv_black_color(uint8_t *color)
+static void convert_black_color(uint8_t *color)
 {
   if (*color == 0) {
     *color = (uint8_t)0b11000000;

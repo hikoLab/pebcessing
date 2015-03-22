@@ -39,6 +39,8 @@
 #define minute()              pblp5_minute()
 #define second()              pblp5_second()
 #define millis()              pblp5_millis()
+#define rotate(angle)         pblp5_rotate(angle)
+#define translate(x, y)       pblp5_translate(x, y)
 #define color(r, g, b)        pblp5_color(r, g, b)
 #define background(color)     pblp5_background(color)
 #define colorMode(mode)       pblp5_colorMode(mode)
