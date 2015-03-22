@@ -11,6 +11,7 @@ static int color_mode = COLOR_MODE_RGB;
 static float color_v1_max = 255;
 static float color_v2_max = 255;
 static float color_v3_max = 255;
+static int ellipse_mode = DRAW_OPTION_CENTER;
 static long int pblp5_init_time;
 
 
@@ -89,15 +90,33 @@ inline void pblp5_line(int x1, int y1, int x2, int y2)
 */
 void pblp5_ellipse(int x, int y, int w, int h)
 {
-  int radius = w;
   if (w != h) {
-    radius = (w + h) / 2;
+    w = (w + h) / 2;
   }
-  pblp5_circle(x, y, radius);
+  pblp5_circle(x, y, w);
 }
 
-void pblp5_circle(int x, int y, int radius)
+void pblp5_circle(int x, int y, int w)
 {
+  int radius = 0;
+
+  // 'CORNERS' mode is invalid because it's not possible to draw an ellipse with Pebble SDK.
+  switch (ellipse_mode) {
+    case DRAW_OPTION_CENTER:
+      radius = w / 2;
+      break;
+    case DRAW_OPTION_RADIUS:
+      radius = w;
+      break;
+    case DRAW_OPTION_CORNER:
+      x = x + w / 2;
+      y = y + w / 2;
+      radius = w / 2;
+      break;
+    default:
+      radius = w / 2;
+  }
+
   if (!no_fill_flag) {
     graphics_fill_circle(ctx, GPoint(x, y), radius);
   }
@@ -187,6 +206,10 @@ void pblp5_triangle(int x1, int y1, int x2, int y2, int x3, int y3)
   gpath_destroy(path);
 }
 
+void pblp5_ellipseMode(int mode)
+{
+  ellipse_mode = mode;
+}
 
 /* --------------------------
    Time & Date

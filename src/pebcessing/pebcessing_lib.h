@@ -52,7 +52,7 @@ void pblp5_size(int w, int h);
 void pblp5_point(int x, int y);
 void pblp5_line(int x1, int y1, int x2, int y2);
 void pblp5_ellipse(int x, int y, int w, int h);
-void pblp5_circle(int x, int y, int radius);
+void pblp5_circle(int x, int y, int w);
 void pblp5_rect(int x1, int y1, int x2, int y2);
 #ifndef quad
 void pblp5_quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
@@ -60,6 +60,7 @@ void pblp5_quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 #endif
 void pblp5_triangle(int x1, int y1, int x2, int y2, int x3, int y3);
+void pblp5_ellipseMode(int mode);
 int pblp5_year();
 int pblp5_month();
 int pblp5_day();
