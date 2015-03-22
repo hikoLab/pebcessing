@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rect() - Pebcessing Reference</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet"><!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>Pebcessing Reference</h1>
+      <p class="lead">Processing-like framework for Pebble Smartwatch. Let's sketch a watchface with code!</p>
+    </div>
+    <div>
+      <div class="container">
+        <h2>rect()</h2>
+        <h3>Examples</h3>
+        <div class="row">
+          <div class="col-md-4 pebble-bg"><img src="img/rect_ex.png" class="pebble-disp" alt="rect() example"></div>
+          <div class="col-md-8">
+            <pre>
+void draw() {
+  rect(30, 20, 55, 55);
+}
+</pre>
+          </div>
+        </div>
+        <h3>Description</h3>
+        <p>Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. The way these parameters are interpreted, however, may be changed with the rectMode() function.</p>
+        <h3>Syntax</h3>
+        <p>rect(a, b, c, d)</p>
+        <h3>Parameters</h3>
+        <p>a float: x-coordinate of the rectangle by default<br>
+        b float: y-coordinate of the rectangle by default<br>
+        c float: width of the rectangle by default<br>
+        d float: height of the rectangle by default</p>
+        <h3>Returns</h3>
+        <p>void</p>
+        <h3>Related</h3>
+        <p>quad()</p>
+        <p style="margin-top:60px"><a href="index.html">Back to index</a></p>
+      </div>
+      <hr style="margin-top: 30px;">
+      <footer class="footer">
+        <p>Pebcessing is developed by <a href="http://hikolab.com/">hikoLab</a>.</p>
+        <p>This reference is based on <a href="https://processing.org/reference/">Processing's reference</a> by <a href="https://processing.org/people/">Processing.org</a>. It is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International</a>.</p>
+        <p><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border: none" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"></a></p>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

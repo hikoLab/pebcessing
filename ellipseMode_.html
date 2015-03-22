@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ellipseMode() - Pebcessing Reference</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet"><!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>Pebcessing Reference</h1>
+      <p class="lead">Processing-like framework for Pebble Smartwatch. Let's sketch a watchface with code!</p>
+    </div>
+    <div>
+      <div class="container">
+        <h2>ellipseMode()</h2>
+        <h3>Examples</h3>
+        <div class="row">
+          <div class="col-md-4 pebble-bg"><img src="img/ellipseMode_ex.png" class="pebble-disp" alt="ellipseMode() example"></div>
+          <div class="col-md-8">
+            <pre>
+void draw() {
+  background(255);
+  stroke(0);
+
+  ellipseMode(RADIUS);  // Set ellipseMode to RADIUS
+  fill(255);  // Set fill to white
+  ellipse(50, 50, 30, 30);  // Draw white ellipse using RADIUS mode
+
+  ellipseMode(CENTER);  // Set ellipseMode to CENTER
+  fill(0);  // Set fill to black
+  ellipse(50, 50, 30, 30);  // Draw black ellipse using CENTER mode
+
+  ellipseMode(CORNER);  // Set ellipseMode is CORNER
+  fill(255);  // Set fill to white
+  ellipse(50, 50, 50, 50);  // Draw white ellipse using CORNER mode
+
+  line(50, 0, 50, height);
+  line(0, 50, width, 50);  
+}
+</pre>
+          </div>
+        </div>
+        <h3>Description</h3>
+        <p>Modifies the location from which ellipses or circles are drawn by changing the way in which parameters given to ellipse() or circle() are interpreted.</p>
+        <p>The default mode is ellipseMode(CENTER), which interprets the first two parameters of ellipse() or circle() as the shape's center point, while the third and fourth parameters are its width and height.</p>
+        <p>ellipseMode(RADIUS) also uses the first two parameters of ellipse() or circle() as the shape's center point, but uses the third and fourth parameters to specify half of the shape's width and height.</p>
+        <p>ellipseMode(CORNER) interprets the first two parameters of ellipse() or circle() as the upper-left corner of the shape, while the third and fourth parameters are its width and height.</p>
+        <p>With Pebcessing, it's not possible to use CORNERS unlike Processing.</p>
+        <p>The parameter must be written in ALL CAPS because Pebcessing is a case-sensitive language.</p>
+        <h3>Syntax</h3>
+        <p>ellipseMode(mode)</p>
+        <h3>Parameters</h3>
+        <p>mode int: either CENTER, RADIUS, CORNER</p>
+        <h3>Returns</h3>
+        <p>void</p>
+        <h3>Related</h3>
+        <p>circle()<br>
+        ellipse()</p>
+        <p style="margin-top:60px"><a href="index.html">Back to index</a></p>
+      </div>
+      <hr style="margin-top: 30px;">
+      <footer class="footer">
+        <p>Pebcessing is developed by <a href="http://hikolab.com/">hikoLab</a>.</p>
+        <p>This reference is based on <a href="https://processing.org/reference/">Processing's reference</a> by <a href="https://processing.org/people/">Processing.org</a>. It is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International</a>.</p>
+        <p><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border: none" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"></a></p>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+body {
+    font-size: 18px
+    }
+
+h2 {
+    font-size: 28px
+    }
+
+h3 {
+    font-size: 22px;
+    margin-top: 50px
+    }
+
+h4 {
+    margin-top: 25px
+    }
+
+.page-header {
+    border-bottom: 1px solid #CCC
+    }
+
+.row {
+    margin-bottom: 20px
+    }
+
+.row .row {
+    margin-top: 10px;
+    margin-bottom: 0
+    }
+
+[class*="col-"] {
+    padding-top: 15px;
+    padding-bottom: 15px
+    }
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-right: 100px;
+    border-color: #CCC
+    }
+
+ul {
+    list-style: none;
+    font-size: 18px;
+    padding-left: 0
+    }
+
+a:hover {
+    text-decoration: underline
+    }
+
+h3.index {
+    margin-top: 25px
+    }
+
+.index-section {
+    margin-bottom: 60px
+    }
+
+.mark-none {
+    position: relative;
+    height: 12px;
+    width: 12px;
+    display: inline-block;
+    _display: inline;
+    margin-right: 5px
+    }
+
+.mark-added {
+    background-image: url(../img/add.png);
+    background-repeat: no-repeat;
+    height: 13px;
+    width: 13px;
+    display: inline-block;
+    _display: inline;
+    margin-right: 5px
+    }
+
+.mark-modified {
+    background-image: url(../img/mod.png);
+    background-repeat: no-repeat;
+    height: 13px;
+    width: 13px;
+    display: inline-block;
+    _display: inline;
+    margin-right: 5px
+    }
+
+.mark-description {
+    margin-left: auto;
+    width: 30em
+    }
+
+.pebble-bg {
+    background-image: url(../img/pebble_red_bg.png);
+    background-repeat: no-repeat;
+    background-position: 15px 15px
+    }
+
+.pebble-disp {
+    position: relative;
+    left: 49px;
+    top: 37px;
+    margin-bottom: 60px
+    }

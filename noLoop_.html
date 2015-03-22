@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>noLoop() - Pebcessing Reference</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet"><!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>Pebcessing Reference</h1>
+      <p class="lead">Processing-like framework for Pebble Smartwatch. Let's sketch a watchface with code!</p>
+    </div>
+    <div>
+      <div class="container">
+        <h2>noLoop()</h2>
+        <h3>Examples</h3>
+        <div>
+          <pre>
+void setup() {
+  noLoop();
+}
+
+void draw() {
+  // draw something
+}
+
+// For use minuteEvent(), define ENABLE_MINUTE_EVENT in settings.h
+void minuteEvent() {
+  redraw();  // or loop()
+}
+</pre>
+        </div>
+        <h3>Description</h3>
+        <p>Stops Pebcessing from continuously executing the code within draw(). If loop() is called, the code in draw() begins to run continuously again. If using noLoop() in setup(), it should be the last line inside the block. When noLoop() is used, it's not possible to manipulate or access the screen inside event handling functions such as mousePressed() or keyPressed(). Instead, use those functions to call redraw() or loop(), which will run draw(), which can update the screen properly. This means that when noLoop() has been called, no drawing can happen.</p>
+        <h3>Syntax</h3>
+        <p>noLoop()</p>
+        <h3>Returns</h3>
+        <p>void</p>
+        <h3>Related</h3>
+        <p>loop()<br>
+        redraw()</p>
+        <p style="margin-top:60px"><a href="index.html">Back to index</a></p>
+      </div>
+      <hr style="margin-top: 30px;">
+      <footer class="footer">
+        <p>Pebcessing is developed by <a href="http://hikolab.com/">hikoLab</a>.</p>
+        <p>This reference is based on <a href="https://processing.org/reference/">Processing's reference</a> by <a href="https://processing.org/people/">Processing.org</a>. It is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International</a>.</p>
+        <p><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border: none" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"></a></p>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
