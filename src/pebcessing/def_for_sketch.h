@@ -3,8 +3,8 @@
 /* --------------------------
    Alias for compatibility with Processing
    -------------------------- */
-#define boolean     bool
-#define PFont       GFont
+typedef bool        boolean;
+typedef GFont       PFont;
 
 
 /* --------------------------
