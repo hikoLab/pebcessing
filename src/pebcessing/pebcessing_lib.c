@@ -25,6 +25,9 @@ static const GPathInfo TRIANGLE_PATH_INFO = {.num_points = 3, .points = (GPoint[
 static GPath *quad_path = NULL;
 static const GPathInfo QUAD_PATH_INFO = {.num_points = 4, .points = (GPoint[]){{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
 
+static GBitmap **img_array = NULL;
+static int img_array_length = 0;
+static int img_array_index = 0;
 
 static void convert_transformed_pos(int *x, int *y);
 static void convert_black_color(uint8_t *color);
@@ -444,6 +447,53 @@ inline void pblp5_noStroke()
 }
 
 /* --------------------------
+   Image - Loading & Displaying
+   -------------------------- */
+
+PImage pblp5_loadImage(uint32_t resource_id)
+{
+  PImage ret_image;
+
+  // Expand space for img_array if it's full.
+  if (img_array_index == img_array_length) {
+    GBitmap **tmp = realloc(img_array, sizeof(GBitmap *) * (img_array_length + 5));
+    if (tmp == NULL) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: failed to realloc() at loadImage()");
+      ret_image.index = -1;  // Negative value is the sign that image's invalid.
+      return ret_image;
+    }
+    img_array = tmp;
+    img_array_length += 5;
+  }
+
+  // Create a bitmap from the resource
+  img_array[img_array_index] = gbitmap_create_with_resource(resource_id);
+  if (img_array[img_array_index] == NULL) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: failed to gbitmap_create_with_resource() at loadImage()");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Image index: %d", img_array_index);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "The memory may be not enough.");
+    ret_image.index = -1;  // Negative value is the sign that image's invalid.
+    return ret_image;
+  }
+
+  ret_image.index = img_array_index;
+  GRect rect = gbitmap_get_bounds(img_array[img_array_index]);
+  ret_image.width = rect.size.w;
+  ret_image.height = rect.size.h;
+
+  img_array_index++;
+
+  return ret_image;
+}
+
+void pblp5_image(PImage img, int x, int y)
+{
+  if (img.index >= 0) {
+    graphics_draw_bitmap_in_rect(ctx, img_array[img.index], GRect(x, y, img.width, img.height));
+  }
+}
+
+/* --------------------------
    Image - Pixels
    -------------------------- */
 
@@ -469,7 +519,7 @@ void pblp5_loadPixels()
   g_pblp5_canvas_frame_buffer = graphics_capture_frame_buffer(ctx);
 
   if (g_pblp5_canvas_frame_buffer == NULL) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_capture_frame_buffer() at loadPixels()");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: failed to graphics_capture_frame_buffer() at loadPixels()");
     return;
   }
 
@@ -502,7 +552,7 @@ void pblp5_updatePixels()
     graphics_draw_bitmap_in_rect(ctx, g_pblp5_canvas_frame_buffer, gbitmap_get_bounds(g_pblp5_canvas_frame_buffer));
 
     if (!graphics_release_frame_buffer(ctx, g_pblp5_canvas_frame_buffer)) {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: graphics_release_frame_buffer() at updatePixels()");
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: failed to graphics_release_frame_buffer() at updatePixels()");
     }
     g_pblp5_canvas_frame_buffer = NULL;
   }
@@ -652,10 +702,26 @@ void pblp5_init_lib()
   uint16_t ms;
   time_ms(&sec, &ms);
   pblp5_init_time =  sec * 1000 + ms;
+
+  // Allocate space for bitmaps
+  img_array_index = 0;
+  img_array_length = 0;
+  img_array = calloc(5, sizeof(GBitmap *));
+  if (img_array == NULL) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: failed to allocate space for GBitmap*");
+  }
+  else {
+    img_array_length = 5;
+  }
 }
 
 void pblp5_deinit_lib()
 {
+  for (int i = 0; i < img_array_index; i++) {
+    gbitmap_destroy(img_array[i]);
+  }
+  free(img_array);
+
   gpath_destroy(quad_path);
   gpath_destroy(triangle_path);
   gpath_destroy(line_path);
@@ -666,6 +732,8 @@ void pblp5_init_draw_state()
 {
   graphics_context_set_fill_color(ctx, fill_color);
   graphics_context_set_stroke_color(ctx, stroke_color);
+
+  graphics_context_set_compositing_mode(ctx, GCompOpSet);  
 
   translate_x = 0;
   translate_y = 0;

@@ -40,6 +40,13 @@ enum DrawOption {
   DRAW_OPTION_RADIUS
 };
 
+// PImage
+typedef struct {
+  int index; // Index for img_array
+  int width;
+  int height;
+} PImage;
+
 
 /* --------------------------
    Processing-like functions
@@ -78,6 +85,8 @@ void pblp5_fill(uint8_t color);
 void pblp5_noFill();
 void pblp5_stroke(uint8_t color);
 void pblp5_noStroke();
+PImage pblp5_loadImage(uint32_t resource_id);
+void pblp5_image(PImage img, int x, int y);
 uint8_t pblp5_getPixel(int x, int y);
 void pblp5_loadPixels();
 void pblp5_setPixel(int x, int y, uint8_t color);

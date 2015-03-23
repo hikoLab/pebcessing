@@ -48,6 +48,8 @@ typedef GFont       PFont;
 #define noFill()              pblp5_noFill()
 #define stroke(color)         pblp5_stroke(color)
 #define noStroke()            pblp5_noStroke()
+#define loadImage(resource_id)  pblp5_loadImage(resource_id)
+#define image(img, x, y)      pblp5_image(img, x, y)
 #define getPixel(x, y)        pblp5_getPixel(x, y)
 #define loadPixels()          pblp5_loadPixels()
 #define setPixel(x, y, color) pblp5_setPixel(x, y, color)
