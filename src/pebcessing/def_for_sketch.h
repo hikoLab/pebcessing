@@ -10,8 +10,8 @@ typedef GFont       PFont;
 /* --------------------------
    Alias for Pebcessing variables, functions
    -------------------------- */
-#define width       g_pblp5_width
-#define height      g_pblp5_height
+#define sketchWidth       g_pblp5_width
+#define sketchHeight      g_pblp5_height
 #define frameCount  g_pblp5_frame_count
 
 #ifdef ENABLE_KEY_EVENT
