@@ -1,6 +1,16 @@
 #include "pebcessing_lib.h"
 
 
+// This struct type is used for pushMatrix(), popMatrix().
+typedef struct {
+  float x;
+  float y;
+  float angle;
+} transform_param_t;
+
+// pushMatrix() can use push 32 times.
+#define TRANSFORM_STACK_MAX 32
+
 static bool no_stroke_flag = false;
 static bool no_fill_flag = false;
 static GColor fill_color;
@@ -13,6 +23,9 @@ static float color_v2_max = 255;
 static float color_v3_max = 255;
 static int ellipse_mode = DRAW_OPTION_CENTER;
 static long int pblp5_init_time;
+
+static transform_param_t transform_stack[TRANSFORM_STACK_MAX];
+static int transform_stack_index = 0;
 static float translate_x = 0;
 static float translate_y = 0;
 static float rotate_angle = 0;
@@ -185,7 +198,7 @@ void pblp5_rect(int x1, int y1, int x2, int y2)
   So pblp5_quad() is defined directly as quad() if quad macro is already defined.
   It's not good code...
  */
- #ifndef quad
+#ifndef quad
 void pblp5_quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 #else
 void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
@@ -307,6 +320,41 @@ long int pblp5_millis()
 /* --------------------------
    Transform
    -------------------------- */
+
+void pblp5_popMatrix()
+{
+  if (transform_stack_index > 0) {
+    transform_stack_index--;
+    translate_x = transform_stack[transform_stack_index].x;
+    translate_y = transform_stack[transform_stack_index].y;
+    rotate_angle = transform_stack[transform_stack_index].angle;
+
+    calculated_rotate_angle = TRIG_MAX_ANGLE * rotate_angle / (2 * M_PI);
+  }
+  else {
+    translate_x = 0;
+    translate_y = 0;
+    rotate_angle = 0;
+
+    calculated_rotate_angle = 0;
+  }
+}
+
+void pblp5_pushMatrix()
+{
+  if (transform_stack_index >= 32) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Error: pushMatrix() cannot use push more than 32 times");
+    return;
+  }
+  else {
+    transform_stack[transform_stack_index].x = translate_x;
+    transform_stack[transform_stack_index].y = translate_y;
+    transform_stack[transform_stack_index].angle = rotate_angle;
+    transform_stack_index++;
+
+    calculated_rotate_angle = TRIG_MAX_ANGLE * rotate_angle / (2 * M_PI);
+  }
+}
 
 void pblp5_rotate(float angle)
 {

@@ -40,7 +40,7 @@ enum DrawOption {
   DRAW_OPTION_RADIUS
 };
 
-// PImage
+// PImage for compatibility with Processing
 typedef struct {
   int index; // Index for img_array
   int width;
@@ -76,6 +76,8 @@ int pblp5_hour();
 int pblp5_minute();
 int pblp5_second();
 long int pblp5_millis();
+void pblp5_popMatrix();
+void pblp5_pushMatrix();
 void pblp5_rotate(float angle);
 void pblp5_translate(float x, float y);
 uint8_t pblp5_color(float r, float g, float b);
