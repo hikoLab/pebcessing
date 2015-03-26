@@ -39,7 +39,7 @@ void draw() {
           </div>
         </div>
         <h3>Description</h3>
-        <p>Rotates a shape the amount specified by the angle parameter. Angles must be specified in radians (values from 0 to TWO_PI), or they can be converted from degrees to radians with the radians() function. Objects are always rotated around their relative position to the origin, and positive numbers rotate objects in a clockwise direction. Transformations apply to everything that happens afterward, and subsequent calls to the function compound the effect. For example, calling rotate(HALF_PI) once and then calling rotate(HALF_PI) a second time is the same as a single rotate(PI). All tranformations are reset when draw() begins again. This function can be further controlled by pushMatrix() and popMatrix().</p>
+        <p>Rotates a shape the amount specified by the angle parameter. Angles must be specified in radians (values from 0 to TWO_PI), or they can be converted from degrees to radians with the radians() function. Objects are always rotated around their relative position to the origin, and positive numbers rotate objects in a clockwise direction. Transformations apply to everything that happens afterward, and subsequent calls to the function compound the effect. For example, calling rotate(HALF_PI) once and then calling rotate(HALF_PI) a second time is the same as a single rotate(PI). All tranformations are reset when draw() begins again. rotate() can be further controlled by pushMatrix() and popMatrix(). Currently, it' possible to rotate only a primitive shape (circle, rect, line, etc).</p>
         <h3>Syntax</h3>
         <p>rotate(angle)</p>
         <h3>Parameters</h3>
