@@ -39,6 +39,8 @@ typedef GFont       PFont;
 #define minute()              pblp5_minute()
 #define second()              pblp5_second()
 #define millis()              pblp5_millis()
+#define popMatrix()           pblp5_popMatrix()
+#define pushMatrix()          pblp5_pushMatrix()
 #define rotate(angle)         pblp5_rotate(angle)
 #define translate(x, y)       pblp5_translate(x, y)
 #define color(r, g, b)        pblp5_color(r, g, b)
