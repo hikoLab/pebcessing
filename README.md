@@ -28,8 +28,8 @@ void setup()
 void draw()
 {
   // Draw rectangles at random positions
-  float x = random(-20, width);
-  float y = random(-20, height);
+  float x = random(-20, sketchWidth);
+  float y = random(-20, sketchHeight);
   float r = random(10, 30);
   rect(x, y, r, r);
 }
@@ -52,10 +52,12 @@ void setup()
 
 void draw()
 {
+  int w = sketchWidth;
+  int h = sketchHeight;
   for(int i = 0; i < 4; i++) {
     for(int j = 0; j < 4; j++) {
       fill(color(i * 85, j * 85, 255));
-      rect(i * width / 4, j * height / 4, width / 4, height / 4);
+      rect(i * w / 4, j * h / 4, w / 4, h / 4);
     }
   }
 
@@ -65,7 +67,7 @@ void draw()
 
   fill(255);
   textAlign(CENTER);
-  text(timeStr, width / 2, 35);
+  text(timeStr, w / 2, 35);
 }
 
 // minuteEvent() is called every minute.
@@ -98,7 +100,7 @@ void draw()
       // Create a color from Hue, Saturation, Brightness
       int cl = color(255.0 * i / n, 255.0 - 255.0 * j / n, 255.0); 
       fill(cl);
-      ellipse((float)width * i / n + 6, (float)height * j / n + 6, 10, 10);
+      ellipse((float)sketchWidth * i / n + 6, (float)sketchHeight * j / n + 6, 10, 10);
     }
   }
 }
@@ -122,7 +124,7 @@ void draw()
 {
   background(255);
 
-  translate(width / 2 + 15, 0);
+  translate(sketchWidth / 2 + 15, 0);
 
   for(int i = 0; i < 18; i++){
     fill(color(i * 255 / 18, 255, 255));
