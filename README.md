@@ -20,9 +20,9 @@ We can make a Pebble application with below code. Just a simple animation.
 void setup()
 {
   frameRate(5);
-  background(255);
-  fill(0);
-  stroke(255);
+  background(WHITE);
+  fill(BLACK);
+  stroke(WHITE);
 }
 
 void draw()
@@ -65,7 +65,7 @@ void draw()
   char timeStr[6];
   snprintf(timeStr, 6, "%2d:%02d", hour(), minute());
 
-  fill(255);
+  fill(WHITE);
   textAlign(CENTER);
   text(timeStr, w / 2, 35);
 }
@@ -122,7 +122,7 @@ void setup()
 
 void draw()
 {
-  background(255);
+  background(WHITE);
 
   translate(sketchWidth / 2 + 15, 0);
 
