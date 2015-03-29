@@ -249,6 +249,27 @@ inline void pblp5_ellipseMode(int mode)
   ellipse_mode = mode;
 }
 
+inline void pblp5_noSmooth()
+{
+#ifdef PBL_COLOR
+  graphics_context_set_antialiased(ctx, false);
+#endif
+}
+
+inline void pblp5_smooth()
+{
+#ifdef PBL_COLOR
+  graphics_context_set_antialiased(ctx, true);
+#endif
+}
+
+inline void pblp5_strokeWeight(int weight)
+{
+#ifdef PBL_COLOR
+  graphics_context_set_stroke_width(ctx, weight);
+#endif
+}
+
 /* --------------------------
    Time & Date
    -------------------------- */
