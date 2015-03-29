@@ -68,6 +68,9 @@ void quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 #endif
 void pblp5_triangle(int x1, int y1, int x2, int y2, int x3, int y3);
 void pblp5_ellipseMode(int mode);
+void pblp5_noSmooth();
+void pblp5_smooth();
+void pblp5_strokeWeight(int weight);
 int pblp5_year();
 int pblp5_month();
 int pblp5_day();
