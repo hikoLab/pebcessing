@@ -802,7 +802,10 @@ void pblp5_init_draw_state()
   graphics_context_set_fill_color(ctx, fill_color);
   graphics_context_set_stroke_color(ctx, stroke_color);
 
-  graphics_context_set_compositing_mode(ctx, GCompOpSet);  
+#ifdef PBL_COLOR
+  // The GCompOpSet compositing mode is needed for transparency to work.
+  graphics_context_set_compositing_mode(ctx, GCompOpSet);
+#endif
 
   translate_x = 0;
   translate_y = 0;
