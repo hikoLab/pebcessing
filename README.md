@@ -107,7 +107,7 @@ void draw()
 ```
 ![example3](https://github.com/hikoLab/pebcessing/blob/images/images/screenshot_hsb_ex.png)
 
-An example of translate(), rotate(). Currently, it's possible to rotate only primitive shapes.
+An example of translate(), rotate(). Currently, only primitive shapes are able to rotate. (At the Basalt platform, images are also able to rotate.)
 
 ```Processing
 #include "sketch.h"
