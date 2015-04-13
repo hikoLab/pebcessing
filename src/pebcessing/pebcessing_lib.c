@@ -558,7 +558,22 @@ PImage pblp5_loadImage(uint32_t resource_id)
 void pblp5_image(PImage img, int x, int y)
 {
   if (img.index >= 0) {
+#ifdef PBL_COLOR
+    if (rotate_angle == 0) {
+      x += translate_x;
+      y += translate_y;
+      graphics_draw_bitmap_in_rect(ctx, img_array[img.index], GRect(x, y, img.width, img.height));
+    }
+    else {
+      convert_transformed_pos(&x, &y);
+      graphics_draw_rotated_bitmap(ctx, img_array[img.index], GPoint(0, 0), calculated_rotate_angle, GPoint(x, y));
+    }
+#else
+    // graphics_draw_rotated_bitmap() does not exist on the Aplite.
+
+    convert_transformed_pos(&x, &y);
     graphics_draw_bitmap_in_rect(ctx, img_array[img.index], GRect(x, y, img.width, img.height));
+#endif
   }
 }
 
