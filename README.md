@@ -2,6 +2,8 @@
 
 Pebcessing is currently in alpha. The specification is not fixed and there are many incomplete functions because it's under experiment.
 
+*Read this in Japanese: [README.jp.md (日本語)](README.jp.md)*
+
 ##Overview
 
 Pebcessing is a Processing-like framework with which to write simply a code for a [Pebble smartwach](https://getpebble.com/ "Pebble") application. I'm developing Pebcessing especially for non-programmer, designers, artists so that they can create original Pebble watchfaces by programming or can make experiments of visual design for a smart watch. 
@@ -30,8 +32,8 @@ void draw()
   // Draw rectangles at random positions
   float x = random(-20, sketchWidth);
   float y = random(-20, sketchHeight);
-  float r = random(10, 30);
-  rect(x, y, r, r);
+  float w = random(10, 30);
+  rect(x, y, w, w);
 }
 ```
 ![example1](https://raw.githubusercontent.com/hikoLab/pebcessing/images/images/screenshot_random_rect.png) (*This image is a screenshot of the Pebble emulator.*)
@@ -188,6 +190,6 @@ Basically, the files to be edited are "sketch.c" and "setting.h".
 ## License
 Code released under the MIT license. 
 
-Reference released under Creative Commons. It's based on Processing's reference by Processing.org. 
+Reference released under Creative Commons. It's based on [Processing's reference](https://processing.org/reference/) by [Processing.org](https://processing.org/people/). 
 
 
