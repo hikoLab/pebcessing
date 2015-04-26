@@ -1,14 +1,13 @@
 #Pebcessing
 
-Pebcessingは現在α版です。まだ実験中なので、仕様はfixしておらず、多くの未完成の機能があります。
+Pebcessingは現在α版です。実験中の段階なので、まだ仕様はfixしておらず多くの未完成の機能があります。
 
 ##概要
 
-Pebcessingは、[Pebble smartwach](https://getpebble.com/ "Pebble") のアプリをシンプルにコーディングできるProcessingライクなフレームワークです。
-特にノンプログラマーやデザイナー、アーティストといった方が、プログラミングでオリジナルのPebbleのwatchfaceを作ったり、スマートウォッチのためのヴィジュアルデザインの実験ができるようにPebcessingは開発されています。
+Pebcessingは、[Pebble smartwach](https://getpebble.com/ "Pebble") のアプリをシンプルにコーディングできるフレームワークです。
+シンプルな関数でPebbleの画面にグラフィックスを描画できるのが特徴です。プログラミングの初心者の方がオリジナルのwatchfaceを作ったり、デザイナーの方がスマートウォッチのためのビジュアルデザインの実験をする、といったことを手軽に行えるようにするために作られています。
 
-Pebcessingは、ヴィジュアルデザインや新しいメディアアート、教育といった分野で使われている、オープンソースのプログラミング言語[Processing](https://processing.org/ "Processing")の影響を強く受けており、Processingに類似した命令を使うことができます。
-
+Pebcessingは、ビジュアルデザインやメディアアート、教育といった分野で使われている、オープンソースのプログラミング言語[Processing](https://processing.org/ "Processing")の影響を強く受けています。Processingに類似した関数が用意されているので、Processingライクにプログラミングすることができます。
 
 ##例
 
@@ -18,21 +17,23 @@ Pebcessingは、ヴィジュアルデザインや新しいメディアアート�
 #include "sketch.h"
 #include "pebcessing/def_for_sketch.h"
 
+// 初めに1度呼ばれる関数
 void setup()
 {
-  frameRate(5);
-  background(WHITE);
-  fill(BLACK);
-  stroke(WHITE);
+  frameRate(5); // フレームレートを設定。毎秒5回draw()を実行する。
+  background(WHITE); // 背景を白で塗りつぶす
+  fill(BLACK); // 塗りつぶしの色を黒に設定
+  stroke(WHITE); // 線の色を白に設定
 }
 
+// 毎フレーム描画の度に呼ばれる関数
 void draw()
 {
-  // Draw rectangles at random positions
+  // ランダムな位置と大きさで四角形を描画する
   float x = random(-20, sketchWidth);
   float y = random(-20, sketchHeight);
-  float r = random(10, 30);
-  rect(x, y, r, r);
+  float w = random(10, 30);
+  rect(x, y, w, w); // 四角形を描画
 }
 ```
 ![example1](https://raw.githubusercontent.com/hikoLab/pebcessing/images/images/screenshot_random_rect.png) (*この画像は、Pebbleエミュレータのスクリーンショットです。*)
@@ -45,37 +46,37 @@ void draw()
 
 void setup()
 {
-  PFont font = loadSystemFont(FONT_KEY_BITHAM_42_LIGHT); // Use system font
-  textFont(font);
-  noStroke();
-  noLoop();
+  PFont font = loadSystemFont(FONT_KEY_BITHAM_42_LIGHT); // システムフォントをロードする
+  textFont(font); // テキストを描画する際のフォントを指定
+  noStroke(); // 線の描画はしない
+  noLoop(); // draw()を繰り返し呼ばない
 }
 
 void draw()
 {
-  int w = sketchWidth;
-  int h = sketchHeight;
+  int w = sketchWidth; // 描画領域の幅
+  int h = sketchHeight; // 描画領域の高さ
   for(int i = 0; i < 4; i++) {
     for(int j = 0; j < 4; j++) {
-      fill(color(i * 85, j * 85, 255));
-      rect(i * w / 4, j * h / 4, w / 4, h / 4);
+      fill(color(i * 85, j * 85, 255)); // 塗りつぶしの色をcolor(R, G, B)に設定
+      rect(i * w / 4, j * h / 4, w / 4, h / 4); // 四角形を描画
     }
   }
 
-  // C-style string
+  // C言語のスタイルの文字列処理
   char timeStr[6];
-  snprintf(timeStr, 6, "%2d:%02d", hour(), minute());
+  snprintf(timeStr, 6, "%2d:%02d", hour(), minute()); // 現在時刻で"時間:分"という文字列を作る
 
   fill(WHITE);
-  textAlign(CENTER);
-  text(timeStr, w / 2, 35);
+  textAlign(CENTER); // テキストの描画を中央揃えにする
+  text(timeStr, w / 2, 35); // テキストを描画
 }
 
-// minuteEvent() is called every minute.
-// You have to define ENABLE_MINUTE_EVENT in settings.h to use minuteEvent().
+// 毎分呼ばれる関数
+// これを使うためには、setting.hでENABLE_MINUTE_EVENTをdefineする必要がある
 void minuteEvent()
 {
-  redraw();
+  redraw(); // 再描画。draw()が実行される。
 }
 ```
 ![example2](https://github.com/hikoLab/pebcessing/blob/images/images/screenshot_digital_watch.png)
@@ -88,7 +89,7 @@ HSBカラーを使うこともできます。
 
 void setup()
 {
-  colorMode(HSB); // Use HSB color mode
+  colorMode(HSB); // 色をHSBで指定する
   noStroke();
   noLoop();
 }
@@ -98,10 +99,9 @@ void draw()
   int n = 10;
   for(int i = 0; i < n; i++){
     for(int j = 0; j < n; j++){
-      // Create a color from Hue, Saturation, Brightness
-      int cl = color(255.0 * i / n, 255.0 - 255.0 * j / n, 255.0); 
+      int cl = color(255.0 * i / n, 255.0 - 255.0 * j / n, 255.0); // 色相、彩度、明度の値から色をつくる
       fill(cl);
-      ellipse((float)sketchWidth * i / n + 6, (float)sketchHeight * j / n + 6, 10, 10);
+      ellipse((float)sketchWidth * i / n + 6, (float)sketchHeight * j / n + 6, 10, 10); // 円を描画
     }
   }
 }
@@ -125,7 +125,7 @@ void draw()
 {
   background(WHITE);
 
-  translate(sketchWidth / 2 + 15, 0);
+  translate(sketchWidth / 2 + 15, 0); // 座標の原点を移動させる
 
   for(int i = 0; i < 18; i++){
     fill(color(i * 255 / 18, 255, 255));
@@ -133,8 +133,8 @@ void draw()
     fill(color(i * 255 / 18, 100, 255));
     rect(0,40,20,20);
 
-    rotate(radians(20));
-    translate(30, 0);
+    rotate(radians(20)); // 座標を20°回転させる
+    translate(30, 0); // 座標の原点を移動させる
   }
 }
 ```
