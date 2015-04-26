@@ -7,7 +7,7 @@ Pebcessingは現在α版です。まだ実験中なので、仕様はfixして�
 Pebcessingは、[Pebble smartwach](https://getpebble.com/ "Pebble") のアプリをシンプルにコーディングできるProcessingライクなフレームワークです。
 特にノンプログラマーやデザイナー、アーティストといった方が、プログラミングでオリジナルのPebbleのwatchfaceを作ったり、スマートウォッチのためのヴィジュアルデザインの実験ができるようにPebcessingは開発されています。
 
-Pebcessingは、ヴィジュアルデザインや新しいメディアアート、教育といった分野で使われている、オープンソースのプログラミング言語[Processing](https://processing.org/ "Processing")の影響を強く受けており、Processingに類似した命令セットを使うことができます。
+Pebcessingは、ヴィジュアルデザインや新しいメディアアート、教育といった分野で使われている、オープンソースのプログラミング言語[Processing](https://processing.org/ "Processing")の影響を強く受けており、Processingに類似した命令を使うことができます。
 
 
 ##例
@@ -145,7 +145,7 @@ void draw()
 
 ProcessingはJavaベースのプログライング言語ですが、一方、PebcessingはC言語です。そのため、両者にはいくつか差異があります。
 
-例えば、Pebcessingでは、C言語はオブジェクト指向の言語でないので"class"を使うことができませんし、文字列の処理のために、"String"の代わりに"char *"を使う必要があります。
+例えば、Pebcessingでは、C言語はオブジェクト指向の言語でないので"class"を使うことができず、また、文字列の処理のために"String"の代わりに"char *"を使う必要があります。
 
 また、Pebbleの仕様のために、Processingとは同じではない関数があります。
 
@@ -171,7 +171,7 @@ Pebcessingで利用できる関数については[リファレンス(英語)](ht
   * GITHUB PROJECT: https://github.com/hikoLab/pebcessing
 4. "IMPORT"をクリック。
 
-ビルドして、エミュレータ上でアプリを実行してみましょう。あなたのPebbleの実機にアプリをインストールすることも可能です。
+ビルドして、エミュレータ上でアプリを実行してみましょう。Pebbleの実機にアプリをインストールすることも可能です。
 
 ## 使い方
 
@@ -189,4 +189,4 @@ Pebcessingで利用できる関数については[リファレンス(英語)](ht
 
 ソースコードは、MITライセンスのもとで公開されます。
 
-リファレンスは、Creative Commonsのもとで公開されます。このリファレンスは、Processing.orgによって開発されているProcesssingリファレンスを元に作成しています。
+リファレンスは、Creative Commonsのもとで公開されます。このリファレンスは、[Processing.org](https://processing.org/people/)によって開発されている[Processsingリファレンス](https://processing.org/reference/)をベースに作成しています。
