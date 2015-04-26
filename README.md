@@ -4,9 +4,9 @@ Pebcessing is currently in alpha. The specification is not fixed and there are m
 
 ##Overview
 
-Pebcessing is a Processing-like framework with which to write simply a code for a [Pebble smartwach](https://getpebble.com/ "Pebble") application. This is a wrapper of Pebble SDK 3.0.  I'm developing Pebcessing especially for non-programmer, designers, artists so that they can create original Pebble watchfaces by programming or can make experiments of visual design for a smart watch. 
+Pebcessing is a Processing-like framework with which to write simply a code for a [Pebble smartwach](https://getpebble.com/ "Pebble") application. I'm developing Pebcessing especially for non-programmer, designers, artists so that they can create original Pebble watchfaces by programming or can make experiments of visual design for a smart watch. 
 
-Pebcessing is inspired by [Processing](https://processing.org/ "Processing") which is an open source programming language for visual design, new media art, and education. 
+Pebcessing is strongly inspired by [Processing](https://processing.org/ "Processing") which is an open source programming language for visual design, new media art, and education. Pebcessing has the function set that is similar to Processing.
 
 
 ##Examples
@@ -107,7 +107,7 @@ void draw()
 ```
 ![example3](https://github.com/hikoLab/pebcessing/blob/images/images/screenshot_hsb_ex.png)
 
-An example of translate(), rotate(). Currently, only primitive shapes are able to rotate. (At the Basalt platform, images are also able to rotate.)
+An example of translate(), rotate(). With translate() or rotate(), we can translate or rotate the coordinates. Currently, only primitive shapes are able to rotate. At the Basalt platform, Pebble Time, images are also able to rotate.
 
 ```Processing
 #include "sketch.h"
@@ -144,7 +144,7 @@ void draw()
 
 Processing is a Java-based programming language, while Pebcessing is C-language. So there are some differences between them. 
 
-For instance, we cannot use "class" because C-language is not object oriented, and we have to use "char *" to process a character string, instead of "String".
+For instance, in Pebcessing, we cannot use "class" because C-language is not object oriented, and we have to use "char *" to process a character string, instead of "String".
 
 And Pebcessing contains some functions that are not same as Processing because of the Pebble's specification.
 
@@ -154,7 +154,7 @@ See the reference to know available functions in Pebcessing.
 
 ### Build on your local computer
 
-If you've already set up the Pebble SDK 3.0, you can build this repository with `pebble build`. And enter the command to install it to the emulator or your Pebble watch.
+If you've already set up the Pebble SDK 3.0, you can build the downloaded / cloned repository with `pebble build`. And enter either of the following below commands to install it to the emulator or your Pebble watch.
 * `pebble install --emulator aplite`
 * `pebble install --emulator basalt`
 * `pebble install --phone [your IP address]`
