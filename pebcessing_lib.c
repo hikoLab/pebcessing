@@ -402,46 +402,8 @@ void pblp5_translate(float x, float y)
 }
 
 /* --------------------------
-   Color
+   Color - Setting
    -------------------------- */
-
-uint8_t pblp5_color(float v1, float v2, float v3)
-{
-  if (v1 < 0)
-    v1 = 0;
-  else if (v1 > color_v1_max)
-    v1 = color_v1_max;
-
-  if (v2 < 0)
-    v2 = 0;
-  else if (v2 > color_v2_max)
-    v2 = color_v2_max;
-
-  if (v3 < 0)
-    v3 = 0;
-  else if (v3 > color_v3_max)
-    v3 = color_v3_max;
-
-#ifdef PBL_COLOR
-  uint8_t color;
-  if (color_mode == COLOR_MODE_RGB) {
-    color = GColorFromRGB(v1, v2, v3).argb;
-  }
-  else if (color_mode == COLOR_MODE_HSB) {
-    color = get_color_from_hsb(v1, v2, v3);
-  }
-  convert_black_color(&color);
-  return color;
-#else
-  // Calculate gray scale of the RGB color
-  if ((299 * v1 + 587 * v2 + 114 * v3) > 1000 * 255 / 2) {
-    return GColorWhite;
-  }
-  else {
-    return GColorBlack;
-  }
-#endif
-}
 
 void pblp5_background(uint8_t color)
 {
@@ -514,6 +476,165 @@ inline void pblp5_noStroke()
 {
   no_stroke_flag = true;
 }
+
+/* --------------------------
+   Color - Creating & Reading
+   -------------------------- */
+
+uint8_t pblp5_color(float v1, float v2, float v3)
+{
+  if (v1 < 0)
+    v1 = 0;
+  else if (v1 > color_v1_max)
+    v1 = color_v1_max;
+
+  if (v2 < 0)
+    v2 = 0;
+  else if (v2 > color_v2_max)
+    v2 = color_v2_max;
+
+  if (v3 < 0)
+    v3 = 0;
+  else if (v3 > color_v3_max)
+    v3 = color_v3_max;
+
+#ifdef PBL_COLOR
+  uint8_t color;
+  if (color_mode == COLOR_MODE_RGB) {
+    color = GColorFromRGB(v1, v2, v3).argb;
+  }
+  else if (color_mode == COLOR_MODE_HSB) {
+    color = get_color_from_hsb(v1, v2, v3);
+  }
+  convert_black_color(&color);
+  return color;
+#else
+  // Calculate gray scale of the RGB color
+  if ((299 * v1 + 587 * v2 + 114 * v3) > 1000 * 255 / 2) {
+    return GColorWhite;
+  }
+  else {
+    return GColorBlack;
+  }
+#endif
+}
+
+inline int pblp5_red(uint8_t color)
+{
+#ifdef PBL_COLOR
+  convert_black_color(&color);
+  return ((color & 0b00110000) >> 4) * 85;
+#else
+  return color == GColorBlack ? 0 : 255;
+#endif
+}
+
+inline int pblp5_green(uint8_t color)
+{
+#ifdef PBL_COLOR
+  convert_black_color(&color);
+  return ((color & 0b00001100) >> 2) * 85;
+#else
+  return color == GColorBlack ? 0 : 255;
+#endif
+}
+
+inline int pblp5_blue(uint8_t color)
+{
+#ifdef PBL_COLOR
+  convert_black_color(&color);
+  return (color & 0b00000011) * 85;
+#else
+  return color == GColorBlack ? 0 : 255;
+#endif
+}
+
+#ifdef PBL_COLOR
+int pblp5_hue(uint8_t color)
+{
+  convert_black_color(&color);
+  int r = ((color & 0b00110000) >> 4) * 85;
+  int g = ((color & 0b00001100) >> 2) * 85;
+  int b = (color & 0b00000011) * 85;
+
+  int max_val = pblp5_max(r, pblp5_max(g, b));
+  int min_val = pblp5_min(r, pblp5_min(g, b));
+
+  float hue;
+  if (max_val == min_val) {
+    // undefined
+    hue = 0;
+  }
+  else {
+    int c = max_val - min_val;
+    if (max_val == r) {
+      hue = (float)(g - b) / c;
+    }
+    else if (max_val == g) {
+      hue = (float)(b - r) / c + 2;
+    }
+    else {
+      hue = (float)(r - g) / c + 4;
+    }
+    hue *= 60;
+    if (hue < 0) {
+      hue += 360;
+    }
+  }
+
+  // The default range of hue is 0 - 255.
+  return (int)(hue * 255 / 360);
+}
+#else
+inline int pblp5_hue(uint8_t color)
+{
+  return 0;
+}
+#endif
+
+#ifdef PBL_COLOR
+int pblp5_saturation(uint8_t color)
+{
+  convert_black_color(&color);
+  int r = ((color & 0b00110000) >> 4) * 85;
+  int g = ((color & 0b00001100) >> 2) * 85;
+  int b = (color & 0b00000011) * 85;
+
+  int max_val = pblp5_max(r, pblp5_max(g, b));
+  int min_val = pblp5_min(r, pblp5_min(g, b));
+
+  int saturation;
+  if (max_val == min_val) {
+    saturation = 0;
+  }
+  else {
+    saturation = (float)(max_val - min_val) * 255 / max_val;
+  }
+  return saturation;
+}
+#else
+inline int pblp5_saturation(uint8_t color)
+{
+  return 0;
+}
+#endif
+
+#ifdef PBL_COLOR
+int pblp5_brightness(uint8_t color)
+{
+  convert_black_color(&color);
+  int r = ((color & 0b00110000) >> 4) * 85;
+  int g = ((color & 0b00001100) >> 2) * 85;
+  int b = (color & 0b000011) * 85;
+
+  return pblp5_max(r, pblp5_max(g, b));
+}
+#else
+inline int pblp5_brightness(uint8_t color)
+{
+  return color == GColorBlack ? 0 : 255;
+}
+#endif
 
 /* --------------------------
    Image - Loading & Displaying
@@ -676,6 +797,11 @@ inline float pblp5_random(float low, float high)
   return rnd * (high - low) + low;
 }
 
+inline void pblp5_randomSeed(int seed)
+{
+  srand(seed);
+}
+
 /* --------------------------
    Calculation
    -------------------------- */
@@ -693,6 +819,16 @@ float pblp5_constrain(float value, float low, float high)
 inline float pblp5_map(float value, float start1, float stop1, float start2, float stop2)
 {
   return (value - start1) * (stop2 - start2) / (stop1 - start1) + start2;
+}
+
+inline float pblp5_max(float value1, float value2)
+{
+  return value1 > value2 ? value1 : value2;
+}
+
+inline float pblp5_min(float value1, float value2)
+{
+  return value1 < value2 ? value1 : value2;
 }
 
 /* --------------------------
