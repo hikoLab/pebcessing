@@ -44,6 +44,7 @@ typedef GFont       PFont;
 #define millis()              pblp5_millis()
 #define popMatrix()           pblp5_popMatrix()
 #define pushMatrix()          pblp5_pushMatrix()
+#define resetMatrix()          pblp5_resetMatrix()   
 #define rotate(angle)         pblp5_rotate(angle)
 #define translate(x, y)       pblp5_translate(x, y)
 #define background(color)     pblp5_background(color)

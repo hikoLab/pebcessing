@@ -377,6 +377,14 @@ void pblp5_pushMatrix()
   }
 }
 
+inline void pblp5_resetMatrix()
+{
+  translate_x = 0;
+  translate_y = 0;
+  rotate_angle = 0;
+  calculated_rotate_angle = 0;
+}
+
 void pblp5_rotate(float angle)
 {
   rotate_angle += angle;
