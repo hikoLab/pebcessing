@@ -81,6 +81,7 @@ int pblp5_second();
 long int pblp5_millis();
 void pblp5_popMatrix();
 void pblp5_pushMatrix();
+void pblp5_resetMatrix();
 void pblp5_rotate(float angle);
 void pblp5_translate(float x, float y);
 void pblp5_background(uint8_t color);
