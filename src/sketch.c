@@ -16,8 +16,8 @@ void setup()
 void draw()
 {
   // Draw rectangles at random positions
-  float x = random(-20, width);
-  float y = random(-20, height);
+  float x = random(-20, sketchWidth);
+  float y = random(-20, sketchHeight);
   float r = random(10, 30);
   rect(x, y, r, r);
 }
