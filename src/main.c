@@ -9,7 +9,11 @@ static void init(void)
 {
   window = window_create();
 
+// Make the window fullscreen.
+// All Windows are fullscreen-only on the Basalt platform.
+#ifdef PBL_PLATFORM_APLITE
   window_set_fullscreen(window, true);
+#endif
 
   window_stack_push(window, true);
 }
