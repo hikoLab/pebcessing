@@ -87,7 +87,7 @@ static void update_canvas(Layer *layer, GContext *ctx)
 
   GRect fb_bounds = gbitmap_get_bounds(fb);
 #ifdef PBL_PLATFORM_APLITE
-  pre_frame_buffer = gbitmap_create_blank(GSize(fb_bounds.size.w, fb_bounds.size.h));
+  pre_frame_buffer = __gbitmap_create_blank(GSize(fb_bounds.size.w, fb_bounds.size.h));
 #elif PBL_PLATFORM_BASALT
   pre_frame_buffer = gbitmap_create_blank(GSize(fb_bounds.size.w, fb_bounds.size.h), GBitmapFormat8Bit);
 #endif
