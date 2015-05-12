@@ -20,7 +20,7 @@
       <p class="lead">Processing-like framework for Pebble Smartwatch. Let's sketch a watchface with code!</p>
     </div>
     <div>
-      <p style="font-weight: bold; color:rgb(220, 30, 30);">This document is in progress. (Last update: 2015/03/29)</p>
+      <p style="font-weight: bold; color:rgb(220, 30, 30);">This document is in progress. (Last update: 2015/05/13)</p>
       <div class="container">
         <div class="col-md-4">
           <div class="index-section">
@@ -35,6 +35,9 @@
               <li>
                 <div class="mark-none"></div><a href="redraw_.html">redraw()</a>
               </li>
+              <li>
+                <div class="mark-added" title="added"></div>teardown()
+              </li>
             </ul>
           </div>
           <div class="index-section">
@@ -47,10 +50,10 @@
                 <div class="mark-none"></div><a href="frameRate_.html">frameRate()</a>
               </li>
               <li>
-                <div class="mark-none"></div><a href="height.html">height</a>
+                <div class="mark-none"></div><a href="sketchHeight.html">sketchHeight</a>
               </li>
               <li>
-                <div class="mark-none"></div><a href="width.html">width</a>
+                <div class="mark-none"></div><a href="sketchWidth.html">sketchWidth</a>
               </li>
             </ul>
           </div>
@@ -125,8 +128,6 @@
               </li>
             </ul>
           </div>
-        </div>
-        <div class="col-md-4">
           <div class="index-section">
             <h2>Transform</h2>
             <ul>
@@ -137,6 +138,9 @@
                 <div class="mark-none"></div><a href="pushMatrix_.html">pushMatrix()</a>
               </li>
               <li>
+                <div class="mark-none"></div>resetMatrix()
+              </li>
+              <li>
                 <div class="mark-modified" title="modified"></div><a href="rotate_.html">rotate()</a>
               </li>
               <li>
@@ -144,6 +148,8 @@
               </li>
             </ul>
           </div>
+        </div>
+        <div class="col-md-4">
           <div class="index-section">
             <h2>Event</h2>
             <h3 class="index">Input</h3>
@@ -200,7 +206,28 @@
             <h3 class="index">Creating</h3>
             <ul>
               <li>
+                <div class="mark-none"></div>blue()
+              </li>
+              <li>
+                <div class="mark-none"></div>brightness()
+              </li>
+              <li>
                 <div class="mark-modified" title="modified"></div>color()
+              </li>
+              <li>
+                <div class="mark-none"></div>color()
+              </li>
+              <li>
+                <div class="mark-none"></div>green()
+              </li>
+              <li>
+                <div class="mark-none"></div>hue()
+              </li>
+              <li>
+                <div class="mark-none"></div>red()
+              </li>
+              <li>
+                <div class="mark-none"></div>saturation()
               </li>
             </ul>
           </div>
@@ -237,7 +264,7 @@
             <h2>Typography</h2>
             <ul>
               <li>
-                <div class="mark-none"></div>PFont
+                <div class="mark-none"></div><a href="PFont.html">PFont</a>
               </li>
             </ul>
             <h3 class="index">Loading &amp; Display</h3>
@@ -276,6 +303,21 @@
           </div>
           <div class="index-section">
             <h2>Math</h2>
+            <h3 class="index">Calculation</h3>
+            <ul>
+              <li>
+                <div class="mark-none"></div>constrain()
+              </li>
+              <li>
+                <div class="mark-none"></div>map()
+              </li>
+              <li>
+                <div class="mark-none"></div>max()
+              </li>
+              <li>
+                <div class="mark-none"></div>min()
+              </li>
+            </ul>
             <h3 class="index">Trigonometry</h3>
             <ul>
               <li>
@@ -295,6 +337,9 @@
             <ul>
               <li>
                 <div class="mark-modified" title="modified"></div>random()
+              </li>
+              <li>
+                <div class="mark-none"></div>randomSeed()
               </li>
             </ul>
             <h3 class="index">Constants</h3>
