@@ -35,10 +35,10 @@ float x = 0;
 void draw() {
   background(255);
   x = x + 1;
-  if (x &gt; width) {
+  if (x &gt; sketchWidth) {
     x = 0;
   }
-  line(x, 0, x, height); 
+  line(x, 0, x, sketchHeight); 
 }
 
 // For use these functions, define ENABLE_KEY_EVENT in settings.h
