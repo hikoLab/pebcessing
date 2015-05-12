@@ -13,4 +13,6 @@
 
 //#define ENABLE_KEY_EVENT
 
+//#define ENABLE_TEAR_DOWN
+
 #define ENABLE_KEEP_PREVIOUS_FRAME

@@ -187,6 +187,10 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
 void deinit_pebcessing(void)
 {
+#ifdef ENABLE_TEAR_DOWN
+  teardown();
+#endif
+
   pblp5_deinit_lib();
 
   if (g_pblp5_canvas_frame_buffer != NULL) {

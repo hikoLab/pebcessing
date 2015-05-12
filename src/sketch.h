@@ -28,3 +28,7 @@ void keyPressed();
 void keyReleased();
 #endif
 
+#ifdef ENABLE_TEAR_DOWN
+void teardown();
+#endif
+
