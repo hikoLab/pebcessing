@@ -22,6 +22,7 @@ static float color_v1_max = 255;
 static float color_v2_max = 255;
 static float color_v3_max = 255;
 static int ellipse_mode = DRAW_OPTION_CENTER;
+static int rect_mode = DRAW_OPTION_CORNER;
 static long int pblp5_init_time;
 
 static transform_param_t transform_stack[TRANSFORM_STACK_MAX];
@@ -42,6 +43,7 @@ static GBitmap **img_array = NULL;
 static int img_array_length = 0;
 static int img_array_index = 0;
 
+static void convert_params_by_rect_mode(int *x, int *y, int *w, int *h);
 static void convert_transformed_pos(int *x, int *y);
 static void convert_black_color(uint8_t *color);
 static uint8_t get_color_from_hsb(float hue, float saturation, float brightness);
@@ -175,21 +177,25 @@ void pblp5_circle(int x, int y, int w)
   }
 }
 
-void pblp5_rect(int x1, int y1, int x2, int y2)
+void pblp5_rect(int a, int b, int c, int d)
 {
+  int x = a, y = b, w = c, h = d;
+
+  convert_params_by_rect_mode(&x, &y, &w, &h);
+
   if (rotate_angle == 0) {
-    x1 += translate_x;
-    y1 += translate_y;
+    x += translate_x;
+    y += translate_y;
 
     if (!no_fill_flag) {
-      graphics_fill_rect(ctx, GRect(x1, y1, x2, y2), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect(x, y, w, h), 0, GCornerNone);
     }
     if (!no_stroke_flag) {
-      graphics_draw_rect(ctx, GRect(x1, y1, x2, y2));
+      graphics_draw_rect(ctx, GRect(x, y, w, h));
     }
   }
   else {
-    quad(x1, y1, x1 + x2, y1, x1 + x2, y1 + y2, x1, y1 + y2);
+    quad(x, y, x + w, y, x + w, y + h, x, y + h);
   }
 }
 
@@ -248,6 +254,12 @@ inline void pblp5_ellipseMode(int mode)
 {
   ellipse_mode = mode;
 }
+
+inline void pblp5_rectMode(int mode)
+{
+  rect_mode = mode;
+}
+
 
 inline void pblp5_noSmooth()
 {
@@ -877,6 +889,8 @@ void pblp5_text(const char *str, int x, int y)
 
 void pblp5_textInRect(const char *str, int x, int y, int w, int h)
 {
+  convert_params_by_rect_mode(&x, &y, &w, &h);
+
   convert_transformed_pos(&x, &y);
 
   graphics_context_set_text_color(ctx, fill_color);
@@ -970,6 +984,28 @@ void pblp5_init_draw_state()
   translate_y = 0;
   rotate_angle = 0;
   calculated_rotate_angle = 0;
+}
+
+inline void convert_params_by_rect_mode(int *x, int *y, int *w, int *h)
+{
+  switch (rect_mode) {
+    case DRAW_OPTION_CORNER:
+      break;
+    case DRAW_OPTION_CORNERS:
+      *w = *w - *x;
+      *h = *h - *y;
+      break;
+    case DRAW_OPTION_CENTER:
+      *x = *x - *w / 2;
+      *y = *y - *h / 2;
+      break;
+    case DRAW_OPTION_RADIUS:
+      *x = *x - *w;
+      *y = *y - *h;
+      *w = 2 * *w;
+      *h = 2 * *h;
+      break;
+  }
 }
 
 static void convert_transformed_pos(int *x, int *y)
