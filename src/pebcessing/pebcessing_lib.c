@@ -53,8 +53,8 @@ static uint8_t get_color_from_hsb(float hue, float saturation, float brightness)
    Global variables
    -------------------------- */
 
-int g_pblp5_width = 144;                    // Alias of "width"
-int g_pblp5_height = 168;                   // Alias of "height"
+int g_pblp5_width;                          // Alias of "width"
+int g_pblp5_height;                         // Alias of "height"
 unsigned long int g_pblp5_frame_count = 0;  // Alias of "frameCount"
 
 #ifdef ENABLE_KEY_EVENT

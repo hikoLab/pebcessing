@@ -152,6 +152,9 @@ void init_pebcessing(Window *window, Layer *parent_layer)
 
   layer_set_update_proc(canvas_layer, update_canvas);
 
+  g_pblp5_width = bounds.size.w;
+  g_pblp5_height = bounds.size.h;
+
   pblp5_init_lib();
 
 #ifdef ENABLE_KEY_EVENT
