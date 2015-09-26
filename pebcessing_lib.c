@@ -15,6 +15,9 @@ static bool no_stroke_flag = false;
 static bool no_fill_flag = false;
 static GColor fill_color;
 static GColor stroke_color;
+#ifdef PBL_COLOR
+static uint8_t stroke_weight = 1;
+#endif
 static GFont draw_font;
 static GTextAlignment text_alignment = GTextAlignmentLeft;
 static int color_mode = COLOR_MODE_RGB;
@@ -278,6 +281,7 @@ inline void pblp5_smooth()
 inline void pblp5_strokeWeight(int weight)
 {
 #ifdef PBL_COLOR
+  stroke_weight = weight;
   graphics_context_set_stroke_width(ctx, weight);
 #endif
 }
@@ -934,6 +938,10 @@ void pblp5_init_lib()
   fill_color = GColorWhite;
   stroke_color = GColorBlack;
 
+#ifdef PBL_COLOR
+  stroke_weight = 1;
+#endif
+
   draw_font = fonts_get_system_font(FONT_KEY_FONT_FALLBACK);
 
   line_path = gpath_create(&LINE_PATH_INFO);
@@ -974,8 +982,10 @@ void pblp5_init_draw_state()
 {
   graphics_context_set_fill_color(ctx, fill_color);
   graphics_context_set_stroke_color(ctx, stroke_color);
-
+  
 #ifdef PBL_COLOR
+  graphics_context_set_stroke_width(ctx, stroke_weight);
+
   // The GCompOpSet compositing mode is needed for transparency to work.
   graphics_context_set_compositing_mode(ctx, GCompOpSet);
 #endif
